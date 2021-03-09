@@ -1,5 +1,7 @@
 import datetime
 
+#from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
@@ -7,6 +9,8 @@ from django.contrib import messages
 from django.views.generic import ListView, CreateView
 
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+
+#from django.contrib.admin.views.decorators.staff_member_required import
 
 from .models import Customer, Category, Product, Order, OrderItem, ProductOpinion, MetaProduct, OrderComment
 from .forms import ProductOpinionForm, OrderCommentForm
@@ -23,6 +27,7 @@ class OrdersView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
     permission_required = 'store/.orders'
 
 
+@staff_member_required
 def order_details(request, order_details_id):
     viewed_order = Order.objects.get(id=order_details_id)
     order_items = viewed_order.get_orderitems
