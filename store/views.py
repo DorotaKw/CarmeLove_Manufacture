@@ -4,10 +4,30 @@ from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import CreateView
+from django.views.generic import ListView, CreateView
+
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 
 from .models import Customer, Category, Product, Order, OrderItem, ProductOpinion, MetaProduct, OrderComment
 from .forms import ProductOpinionForm, OrderCommentForm
+
+
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class OrdersView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
+    template_name = 'orders.html'
+    model = Order
+    permission_required = 'store/.orders'
+
+
+def order_details(request, order_details_id):
+    viewed_order = Order.objects.get(id=order_details_id)
+    order_items = viewed_order.get_orderitems
+    context = {'viewed_order': viewed_order, 'order_items': order_items}
+    return render(request, 'order_details.html', context)
 
 
 def home(request):
