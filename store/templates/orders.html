@@ -4,6 +4,7 @@
 
 <div>
     <h1>All Orders</h1>
+    <a href="{% url 'orders_completed' %}">Orders Completed</a>
     <ul>
         {% for order in object_list %}
             <ul>

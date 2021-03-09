@@ -15,7 +15,10 @@ urlpatterns = [
     path('<int:user_order_id>/order_history/', order_history, name="order_history"),
 
     path('orders/', OrdersView.as_view(), name='orders'),
-    path('<int:order_details_id>/order_details/', order_details, name='order_details'),
+    path('orders/<int:order_details_id>/order_details/', order_details, name='order_details'),
+    path('orders/orders_completed/', OrdersCompletedView.as_view(), name='orders_completed'),
+    path('orders/orders_completed/<int:completed_order_details_id>/completed_order_details/', completed_order_details, name='completed_order_details'),
+
     # path('<int:product_id>/product/', product, name="product"),
 ]
 

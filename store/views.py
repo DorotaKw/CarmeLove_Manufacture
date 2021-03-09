@@ -35,6 +35,23 @@ def order_details(request, order_details_id):
     return render(request, 'order_details.html', context)
 
 
+class OrdersCompletedView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
+    template_name = 'orders_completed.html'
+    model = Order
+    permission_required = 'store/.orders_completed'
+
+    def get_queryset(self):
+        return Order.objects.filter(complete=True)
+
+
+@staff_member_required
+def completed_order_details(request, completed_order_details_id):
+    viewed_order_completed = Order.objects.get(id=completed_order_details_id)
+    order_items = viewed_order_completed.get_orderitems
+    context = {'viewed_order_completed': viewed_order_completed, 'order_items': order_items}
+    return render(request, 'completed_order_details.html', context)
+
+
 def home(request):
     if request.user.is_authenticated:
         customer = request.user.customer
