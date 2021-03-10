@@ -1,13 +1,21 @@
 import datetime
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView, DetailView
+
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 
 from .models import Customer, Category, Product, Order, OrderItem, ProductOpinion, MetaProduct, OrderComment
 from .forms import ProductOpinionForm, OrderCommentForm
+
+
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
 
 
 def home(request):
@@ -26,21 +34,82 @@ def home(request):
     return render(request, 'home.html', context)
 
 
-def store(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
-    categories = Category.objects.all()
-    meta_products = MetaProduct.objects.all()
-    # products = Product.objects.all()
-    context = {'categories': categories, 'meta_products': meta_products, 'cart_items': cart_items}   #'products': products,
-    return render(request, 'store.html', context)
+# class CartItemsForVisitorView(ListView):
+#     order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+#     cart_items = order['get_cart_items']
+
+
+# class CartItemsForLoggedUser(ListView):
+
+# def blabla(request):
+#     if request.user.is_authenticated:
+#         customer = request.user.customer
+#         order, created = Order.objects.get_or_create(customer=customer, complete=False)
+#         items = order.orderitem_set.all()
+#         cart_items = order.get_cart_items
+#     else:
+#         items = []
+#         order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+#         cart_items = order['get_cart_items']
+#     context = {'cart_items': cart_items}
+#     return context
+
+
+class StoreView(ListView, DetailView):
+    template_name = 'store.html'
+    context_object_name = 'meta_products'
+    model = MetaProduct
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context.update({
+            'categories': Category.objects.all(),
+        })
+        return context
+
+    def get_queryset(self):
+        return MetaProduct.objects.all().order_by('name')
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(customer=customer, complete=False)
+            items = order.orderitem_set.all()
+            cart_items = order.get_cart_items
+            return super(StoreView, self).post(request, *args, **kwargs)
+        else:
+            order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+            cart_items = order['get_cart_items']
+            return super(StoreView, self).post(request, *args, **kwargs)
+
+    # def options(self, request, *args, **kwargs):
+    #     if request.user.is_authenticated:
+    #         customer = request.user.customer
+    #         order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    #         items = order.orderitem_set.all()
+    #         cart_items = order.get_cart_items
+    #     else:
+    #         order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+    #         cart_items = order['get_cart_items']
+    #     self.cart_items = cart_items
+    #     return super(StoreView, self).options(self, request, *args, **kwargs)
+
+
+
+
+    # @login_required
+    # def get_context_data_for_logged_user(self, **kwargs):
+    #     context = super().get_context_data_for_logged_user(**kwargs)
+    #     customer = request.user.customer
+    #     order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    #     items = order.orderitem_set.all()
+    #     cart_items = order.get_cart_items
+    #     context.update({
+    #         'categories': Category.objects.all(),
+    #         'cart_items': cart_items,
+    #     })
+    #     return context
 
 
 def category(request, category_id):
