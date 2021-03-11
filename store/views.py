@@ -63,9 +63,9 @@ def store(request):
     data = cart_data(request)
 
     cart_items = data['cart_items']
-
+    categories = Category.objects.all()
     meta_products = MetaProduct.objects.all().order_by('name')
-    context = {'meta_products': meta_products, 'cart_items': cart_items}
+    context = {'categories': categories, 'meta_products': meta_products, 'cart_items': cart_items}
     return render(request, 'store.html', context)
 
 
@@ -131,8 +131,9 @@ def cart(request):
     cart_items = data['cart_items']
     order = data['order']
     items = data['items']
+    categories = Category.objects.all()
 
-    context = {'items': items, 'order': order, 'cart_items': cart_items}
+    context = {'categories': categories, 'items': items, 'order': order, 'cart_items': cart_items}
     return render(request, 'cart.html', context)
 
 
@@ -142,6 +143,7 @@ def checkout(request):
     cart_items = data['cart_items']
     order = data['order']
     items = data['items']
+    categories = Category.objects.all()
         
     form = OrderCommentForm()
     if request.method == 'POST':
@@ -155,7 +157,8 @@ def checkout(request):
     current_order = Order.objects.get(id=order.id)
     order_comment = OrderComment.objects.filter(order=current_order)
 
-    context = {'items': items, 'order': order,
+    context = {'categories': categories,
+               'items': items, 'order': order,
                'cart_items': cart_items,
                'form': form, 'order_comment': order_comment}
     return render(request, 'checkout.html', context)
@@ -167,11 +170,31 @@ def update_item(request):
 
 def process_order(request):
     transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
     else:
-        print('User is not logged in...')
+        customer, order = quest_order(request, data)
+
+    total = float(data['form']['total'])
+    order.transaction_id = transaction_id
+
+    if total == order.get_cart_total:
+        order.complete = True
+    order.save()
+
+    if order.shipping is True:
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            address=data['shipping']['address'],
+            city=data['shipping']['city'],
+            state=data['shipping']['state'],
+            zipcode=data['shipping']['zipcode'],
+        )
+
     return JsonResponse('Payment submitted...', safe=False)
 
 

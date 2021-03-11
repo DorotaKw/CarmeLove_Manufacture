@@ -57,7 +57,7 @@ def cart_data(request):
     return {'cart_items': cart_items, 'order': order, 'items': items}
 
 
-def questOrder(request, data):
+def quest_order(request, data):
     print('User is not logged in...')
     print('COOKIES:', request.COOKIES)
     name = data['form']['name']
@@ -78,7 +78,7 @@ def questOrder(request, data):
 
     for item in items:
         product = Product.objects.get(id=item['product']['id'])
-        orderItem = OrderItem.objects.create(
+        order_item = OrderItem.objects.create(
             product=product,
             order=order,
             quantity=item['quantity']
