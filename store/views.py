@@ -69,6 +69,12 @@ def store(request):
     return render(request, 'store.html', context)
 
 
+"""
+Nieudolna próba wykorzystania CBV
+dla użytkowników zalogowanych i niezalogowanych.
+Problemem jest wyświetlenie stanu koszyka.
+Próbowałam metody get, post, StoreView dziedziczyło nawet z ListView oraz DetailView."""
+
 # class CartItemsForVisitorView(ListView):
 #     order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
 #     cart_items = order['get_cart_items']
