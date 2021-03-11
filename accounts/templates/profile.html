@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+    <div>
+        {% if history_orders %}
+            {% for history_order in object_list %}
+            <div>
+                {{ history_order.id }}
+            </div>
+            {% endfor %}
+        {% endif% }
+    </div>
+{% endblock %}

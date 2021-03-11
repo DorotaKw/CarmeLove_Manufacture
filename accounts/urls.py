@@ -11,4 +11,5 @@ urlpatterns = [
     path('password_change/', SubmittablePasswordChangeView.as_view(),
          name='password_change'),
     path('sign_up/', SignUpView.as_view(), name='sign_up'),
+    path('profile/', ProfileView.as_view(), name='profile'),
 ]
