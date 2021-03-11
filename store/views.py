@@ -14,6 +14,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMi
 from .models import Customer, Category, Product, Order, OrderItem, ProductOpinion, MetaProduct, OrderComment
 from .forms import ProductOpinionForm, OrderCommentForm
 
+from .utils import *
+
 
 # def dispatch(self, request, *args, **kw):
 #     """Mix-in for generic views"""
@@ -26,40 +28,45 @@ from .forms import ProductOpinionForm, OrderCommentForm
 #     return response
 
 
-class StaffRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_staff
-
-
-class CheckRequiredMixin(UserPassesTestMixin):
-    def test_func(self):
-        if self.request.user.is_authenticated:
-            customer = self.request.user.customer
-            order, created = Order.objects.get_or_create(customer=customer, complete=False)
-            items = order.orderitem_set.all()
-            cart_items = order.get_cart_items
-        else:
-            items = []
-            order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-            cart_items = order['get_cart_items']
-        context = {'cart_items': cart_items}
-        return context
+# class StaffRequiredMixin(UserPassesTestMixin):
+#     def test_func(self):
+#         return self.request.user.is_staff
+#
+#
+# class CheckRequiredMixin(UserPassesTestMixin):
+#     def test_func(self):
+#         if self.request.user.is_authenticated:
+#             customer = self.request.user.customer
+#             order, created = Order.objects.get_or_create(customer=customer, complete=False)
+#             items = order.orderitem_set.all()
+#             cart_items = order.get_cart_items
+#         else:
+#             items = []
+#             order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+#             cart_items = order['get_cart_items']
+#         context = {'cart_items': cart_items}
+#         return context
 
 
 def home(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
+
+    cart_items = data['cart_items']
+
     categories = Category.objects.all()
     about = 'Hi! We are small Manufacture of Sweets!'
     context = {'categories': categories, 'cart_items': cart_items, 'about': about}
     return render(request, 'home.html', context)
+
+
+def store(request):
+    data = cart_data(request)
+
+    cart_items = data['cart_items']
+
+    meta_products = MetaProduct.objects.all().order_by('name')
+    context = {'meta_products': meta_products, 'cart_items': cart_items}
+    return render(request, 'store.html', context)
 
 
 # class CartItemsForVisitorView(ListView):
@@ -70,22 +77,22 @@ def home(request):
 # class CartItemsForLoggedUser(ListView):
 
 
-class StoreView(CheckRequiredMixin, ListView):
-    template_name = 'store.html'
-    context_object_name = 'meta_products'
-    model = MetaProduct
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        cart_items = CheckRequiredMixin()
-        context.update({
-            'categories': Category.objects.all(),
-            'cart_items': cart_items,
-        })
-        return context
-
-    def get_queryset(self):
-        return MetaProduct.objects.all().order_by('name')
+# class StoreView(CheckRequiredMixin, ListView):
+#     template_name = 'store.html'
+#     context_object_name = 'meta_products'
+#     model = MetaProduct
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         cart_items = CheckRequiredMixin()
+#         context.update({
+#             'categories': Category.objects.all(),
+#             'cart_items': cart_items,
+#         })
+#         return context
+#
+#     def get_queryset(self):
+#         return MetaProduct.objects.all().order_by('name')
 
     # def options(self, request, *args, **kwargs):
     #     if request.user.is_authenticated:
@@ -101,16 +108,9 @@ class StoreView(CheckRequiredMixin, ListView):
 
 
 def category(request, category_id):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer,
-                                                     complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
+    cart_items = data['cart_items']
+
     categories = Category.objects.all()
     viewed_category = Category.objects.get(id=category_id)
     meta_products = MetaProduct.objects.filter(category=category_id).order_by('name').all()
@@ -120,30 +120,22 @@ def category(request, category_id):
 
 
 def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
+
+    cart_items = data['cart_items']
+    order = data['order']
+    items = data['items']
 
     context = {'items': items, 'order': order, 'cart_items': cart_items}
     return render(request, 'cart.html', context)
 
 
 def checkout(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
+
+    cart_items = data['cart_items']
+    order = data['order']
+    items = data['items']
         
     form = OrderCommentForm()
     if request.method == 'POST':
@@ -179,11 +171,10 @@ def process_order(request):
 
 def meta_product(request, meta_product_id):
     categories = Category.objects.all()
+    data = cart_data(request)
+    cart_items = data['cart_items']
+
     if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
         form = ProductOpinionForm()
         viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
         products = viewed_meta_product.product_set.all()
@@ -205,14 +196,10 @@ def meta_product(request, meta_product_id):
                            'cart_items': cart_items}
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
         # for now it's the only idea I have, it's working, but view is too fat.
         # maybe JS or/and CSS will help?
         form = None
 
-    categories = Category.objects.all()
     viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
     products = viewed_meta_product.product_set.all()
     opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
