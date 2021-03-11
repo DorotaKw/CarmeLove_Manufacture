@@ -9,8 +9,10 @@
 <body>
 
     <div>
-        <a href="{% url 'cart' %}">Cart</a>
-        <a href="{% url 'checkout' %}">Checkout</a>
+        <a href="{% url 'accounts:sign_up' %}">Sign Up</a>
+        <a href="{% url 'accounts:login' %}">Login</a>
+        <a href="{% url 'accounts:logout' %}">Logout</a>
+        <a href="{% url 'accounts:password_change' %}">Password Change</a>
         <a href="{% url 'orders_history' %}">Orders History</a>
 
     </div>
