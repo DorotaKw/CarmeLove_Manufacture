@@ -47,12 +47,6 @@ def home(request):
     return render(request, 'home.html', context)
 
 
-# class HomeView(ListView):
-#     template_name = 'home.html'
-#     about = 'Hi! We are small Manufacture of Sweets!'
-#     context_object_name = 'about'
-
-
 class StoreView(ListView):
     template_name = 'store.html'
     context_object_name = 'meta_products'
@@ -72,62 +66,16 @@ class StoreView(ListView):
         return MetaProduct.objects.all().order_by('name')
 
 
-class CategoryDetailView(DetailView):
-    template_name = 'category.html'
-    context_object_name = 'categories'
-    model = Category
+def category(request, category_id):
+    data = cart_data(request)
+    cart_items = data['cart_items']
 
-    # def get_object(self, queryset=None):
-    #     viewed_category = get_object_or_404(Category, pk=self.kwargs.get('category_id'))
-    #     meta_products = get_object_or_404(MetaProduct, category=self.kwargs.get('category_id'))
-    #     context = {'viewed_category': viewed_category, 'meta_products': meta_products}
-    #     return context
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        cart_item = check_user_auth(request=self.request)
-        cart_items = cart_item.get('cart_items')
-        # viewed_category = get_object_or_404(Category, id=self.request.GET.get['pk'])
-        # meta_products = get_object_or_404(MetaProduct, category=self.request.GET.get['pk'])
-        viewed_category = get_object_or_404(Category, pk=self.kwargs.get('category_id'))
-        meta_products = get_object_or_404(MetaProduct, category=self.kwargs.get('category_id'))
-        #viewed_category = Category.objects.get(id=category_id)
-        #meta_products = MetaProduct.objects.filter(category=self.category_id).order_by('name').all()
-
-        context.update({
-            'viewed_category': viewed_category,
-            'meta_products': meta_products,
-            'cart_items': cart_items
-        })
-        return context
-
-    def get_queryset(self):
-        return Category.objects.all().order_by('name')
-
-"""
-class MyView(TemplateView):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Use kwargs from URL
-        context['first_object'] = get_object_or_404(FirstObjectModel, id=self.kwargs['pk'])
-        context['second_object'] = get_object_or_404(SecondObjectModel, id=self.kwargs['abc'])
-        # Fetch from GET params
-        context['first_object'] = get_object_or_404(FirstObjectModel, id=self.request.GET.get('pk'))
-        context['second_object'] = get_object_or_404(SecondObjectModel, id=self.request.GET.get('abc'))
-        return context
-        """
-
-
-# def category(request, category_id):
-#     data = cart_data(request)
-#     cart_items = data['cart_items']
-#
-#     categories = Category.objects.all()
-#     viewed_category = Category.objects.get(id=category_id)
-#     meta_products = MetaProduct.objects.filter(category=category_id).order_by('name').all()
-#     context = {'categories': categories, 'viewed_category': viewed_category,
-#                'meta_products': meta_products, 'cart_items': cart_items}
-#     return render(request, 'category.html', context)
+    categories = Category.objects.all()
+    viewed_category = Category.objects.get(id=category_id)
+    meta_products = MetaProduct.objects.filter(category=category_id).order_by('name').all()
+    context = {'categories': categories, 'viewed_category': viewed_category,
+               'meta_products': meta_products, 'cart_items': cart_items}
+    return render(request, 'category.html', context)
 
 
 def cart(request):
