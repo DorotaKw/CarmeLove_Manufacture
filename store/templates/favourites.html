@@ -16,23 +16,15 @@
 </div>
 
 <div>
-    {{ customer }}
-    <hr>
-    {% if user_orders %}
+
+    {% if user_favourites %}
         <div>
-            {% for user_order in user_orders %}
-            <p>No: {{ forloop.counter }}</p>
-            <p>Order no:{{ user_order.id }}</p>
-            <p>Date: {{ user_order.date_ordered.date }}</p>
-            <p>Time: {{ user_order.date_ordered.time }}</p>
-            <p>Total: {{ user_order.get_cart_total }}</p>
-            <p>Items: {{ user_order.get_cart_items }}</p>
-            <a href="{% url 'order_history' user_order.id %}">Order Details</a>
-            <hr>
+            {% for user_favourite in user_favourites %}
+                <p>{{ user_favourite.name }}</p>
             {% endfor %}
         </div>
     {% else %}
-        <p>You have no completed orders.</p>
+        <p>You have no favourite products!</p>
     {% endif %}
 </div>
 

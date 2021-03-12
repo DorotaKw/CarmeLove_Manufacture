@@ -65,6 +65,11 @@ class MetaProduct(Model):
             url = ''
         return url
 
+    @property
+    def favourite(self):
+        pass
+        #favourite =
+
 
 class Product(Model):
     class Meta:
@@ -200,3 +205,20 @@ class ProductOpinion(Model):
     def __str__(self):
         return self.title
 
+
+class FavouriteProduct(Model):
+    class Meta:
+        verbose_name = 'Favourite Product'
+        verbose_name_plural = 'Favourite Products'
+
+    meta_product = ForeignKey(MetaProduct, on_delete=CASCADE)
+    customer = ForeignKey(Customer, on_delete=CASCADE, null=True, blank=True)
+    favourite = BooleanField(default=False, null=True, blank=True)
+
+    def __str__(self):
+        return self.meta_product.name
+
+    @property
+    def name(self):
+        name = self.meta_product.name
+        return name
