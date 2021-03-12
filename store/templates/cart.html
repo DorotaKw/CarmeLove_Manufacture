@@ -1,42 +1,92 @@
+ <!DOCTYPE html>
+
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
 
-<div>
-    <p>SIMPLE NAV JUST FOR NOW</p>
-    <p><a href="{% url 'orders_history' %}">Orders History</a></p>
-    <p><a href="{% url 'favourites' %}">Favourites</a></p>
-    <p>Products in Cart: {{ cart_items }}</p>
-
-    <div>
-        {% for category in categories %}
-            <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
-        {% endfor %}
-    </div>
-</div>
-
-<div>
+<div class="title">
     <strong>Cart</strong>
-    <div>
-        <p>Items: {{ order.get_cart_items }}</p>
-        <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
-    </div>
-    <div>
-        {% for item in items %}
-        <div>
-            <div><img src="{{ item.product.imageURL }}"></div>
-            <div>{{ item.product.name }}</div>
-            <div>{{ item.product.price|floatformat:2 }}</div>
-            <div>x{{ item.quantity }}</div>
-            <div>
-                <img data-product="{{ item.product.id }}" data-action="add" class="update-cart" src="{% static 'images/arrow-up.png' %}">
-                <img data-product="{{ item.product.id }}" data-action="remove" class="update-cart" src="{% static 'images/arrow-down.png' %}">
-            </div>
-            <div>{{ item.get_total|floatformat:2 }}</div>
-        </div>
-        {% endfor %}
-    </div>
 </div>
+
+<body>
+    <main>
+        <div class="cart">
+            <div class="cart-module">
+                <label for="promo-code">Masz kod promocyjny?</label>
+                <input id="promo-code" type="text" name="promo-code" maxlength="5" class="promo-code-field">
+                <button class="promo-code-cta">Apply</button>
+            </div>
+
+            <div class="cart-labels">
+                <ul>
+                    <li class="item item-heading">Produkt</li>
+                    <li class="price">Cena</li>
+                    <li class="quantity">Ilość</li>
+                    <li class="subtotal">Podsumowanie</li>
+                </ul>
+            </div>
+
+            <div class="cart-product">
+                <div class="{% for item in items %}">
+                        <div class="product-image">
+                            <img src="{{ item.product.imageURL }}" height="206" width="246">
+                        </div>
+                <div class="product-details">
+                    <h4><strong><span class="summary-total-items"><p title="x{{ item.quantity }}"></p></span><p title="{{ item.product.name }}"></p></strong></h4>
+                </div>
+            </div>
+            <div class="price" scr="{{item.product.price|floatformat:2 }}"></div>
+            <div class="quantity">
+                <input type="number" name="myInput" value="1" min="1" max="100" step="1" class="quantity-field">
+            </div>
+            <div class="subtotal">{{ item.get_total|floatformat:2 }}</div>
+            <div class="remove">
+                <button>Remove</button>
+            </div>
+        </div>
+    <aside>
+      <div class="summary">
+        <div class="summary-total-items"><span class="total-items"></span> Wszystkie słodkości</div>
+        <div class="summary-subtotal">
+          <div class="subtotal-title">Suma</div>
+          <div class="subtotal-value final-value" id="basket-subtotal"></div>
+          <div class="summary-promo hide">
+            <div class="promo-title">Promotion</div>
+            <div class="promo-value final-value" id="basket-promo"></div>
+          </div>
+        </div>
+        <div class="summary-delivery">
+          <select name="delivery-collection" class="summary-delivery-selection">
+              <option value="0" selected="selected">Wybierz jak mamy dostarczyć produkt</option>
+             <option value="collection">Odbiór osobity</option>
+             <option value="first-class">dostawa 1</option>
+             <option value="second-class">dostawa 2</option>
+             <option value="signed-for">katering</option>
+          </select>
+        </div>
+        <div class="summary-total">
+          <div class="total-title">Podsumowanie</div>
+          <div class="total-value final-value" id="basket-total"></div>
+        </div>
+        <div class="summary-checkout">
+          <button class="checkout-cta">Przejdź do podsumowania</button>
+            <a href="checkout.html"></a>
+        </div>
+      </div>
+    </aside>
+  </main>
+</body>
+
+</html>
+        {% endfor %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
 {% endblock content %}
+
+<div>
+    <p>Items: {{ order.get_cart_items }}</p>
+    <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
+    <img data-product="{{ item.product.id }}" data-action="add" class="update-cart" src="{% static 'static/arrow-up.png' %}">
+                <img data-product="{{ item.product.id }}" data-action="remove" class="update-cart" src="{% static 'static/arrow-down.png' %}">
+
+</div>
