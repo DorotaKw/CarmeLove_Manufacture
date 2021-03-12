@@ -1,16 +1,58 @@
 import datetime
 
+#from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, HttpResponseRedirect, redirect
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import CreateView
+from django.views.generic import ListView, CreateView
+
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
+
+#from django.contrib.admin.views.decorators.staff_member_required import
 
 import json
 
 from .models import Customer, Category, Product, Order, OrderItem,\
     ProductOpinion, MetaProduct, OrderComment, FavouriteProduct
 from .forms import ProductOpinionForm, OrderCommentForm
+
+
+class StaffRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class OrdersView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
+    template_name = 'orders.html'
+    model = Order
+    permission_required = 'store/.orders'
+
+
+@staff_member_required
+def order_details(request, order_details_id):
+    viewed_order = Order.objects.get(id=order_details_id)
+    order_items = viewed_order.get_orderitems
+    context = {'viewed_order': viewed_order, 'order_items': order_items}
+    return render(request, 'order_details.html', context)
+
+
+class OrdersCompletedView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
+    template_name = 'orders_completed.html'
+    model = Order
+    permission_required = 'store/.orders_completed'
+
+    def get_queryset(self):
+        return Order.objects.filter(complete=True)
+
+
+@staff_member_required
+def completed_order_details(request, completed_order_details_id):
+    viewed_order_completed = Order.objects.get(id=completed_order_details_id)
+    order_items = viewed_order_completed.get_orderitems
+    context = {'viewed_order_completed': viewed_order_completed, 'order_items': order_items}
+    return render(request, 'completed_order_details.html', context)
 
 
 def home(request):

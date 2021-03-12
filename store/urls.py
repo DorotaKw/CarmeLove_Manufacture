@@ -3,6 +3,7 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
+    # path('', home, name="home"),
     path('', home, name="home"),
     path('store/', store, name="store"),
     path('<int:category_id>/category/', category, name="category"),
@@ -13,6 +14,10 @@ urlpatterns = [
     path('<int:meta_product_id>/meta_product/', meta_product, name="meta_product"),
     path('orders_history/', orders_history, name="orders_history"),
     path('<int:user_order_id>/order_history/', order_history, name="order_history"),
+    path('orders/', OrdersView.as_view(), name='orders'),
+    path('orders/<int:order_details_id>/order_details/', order_details, name='order_details'),
+    path('orders/orders_completed/', OrdersCompletedView.as_view(), name='orders_completed'),
+    path('orders/orders_completed/<int:completed_order_details_id>/completed_order_details/', completed_order_details, name='completed_order_details'),
     path('favourites/', favourites, name='favourites'),
     # path('<int:product_id>/product/', product, name="product"),
 ]
