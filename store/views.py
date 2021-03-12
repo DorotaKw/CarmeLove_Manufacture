@@ -2,7 +2,7 @@ import datetime
 
 #from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
-from django.shortcuts import render, HttpResponseRedirect, redirect
+from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
@@ -22,6 +22,20 @@ from .forms import ProductOpinionForm, OrderCommentForm
 class StaffRequiredMixin(UserPassesTestMixin):
     def test_func(self):
         return self.request.user.is_staff
+
+
+def set_initial_cart_status(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cart_items = order.get_cart_items
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+        cart_items = order['get_cart_items']
+    context = {'cart_items': cart_items}
+    return context
 
 
 class OrdersView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
@@ -187,52 +201,27 @@ def process_order(request):
     return JsonResponse('Payment submitted...', safe=False)
 
 
-def meta_product(request, meta_product_id):
-    categories = Category.objects.all()
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+class MetaProductView(ListView):
+    template_name = 'meta_product.html'
+    context_object_name = 'meta_product'
+    model = MetaProduct
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        categories = Category.objects.all()
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
         form = ProductOpinionForm()
-        viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
+        viewed_meta_product = get_object_or_404(MetaProduct, id=self.kwargs['meta_product_id'])
         products = viewed_meta_product.product_set.all()
         opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
-        if request.method == 'POST':
-            form = ProductOpinionForm(request.POST)
-            if form.is_valid():
-                new_opinion = form.save(commit=False)
-                new_opinion.customer = request.user.customer
-                new_opinion.product = viewed_meta_product
-                new_opinion.save()
-                user_new_opinion = new_opinion
-                context = {'categories': categories,
-                           'meta_product': viewed_meta_product,
-                           'products': products,
-                           'form': form,
-                           'user_new_opinion': user_new_opinion,
-                           'opinions': opinions,
-                           'cart_items': cart_items}
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
-        # for now it's the only idea I have, it's working, but view is too fat.
-        # maybe JS or/and CSS will help?
-        form = None
-
-    categories = Category.objects.all()
-    viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
-    products = viewed_meta_product.product_set.all()
-    opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
-    context = {'categories': categories,
-               'meta_product': viewed_meta_product,
-               'products': products,
-               'form': form,
-               'opinions': opinions,
-               'cart_items': cart_items}
-    return render(request, 'meta_product.html', context)
+        context = {'categories': categories,
+                   'meta_product': viewed_meta_product,
+                   'products': products,
+                   'form': form,
+                   'opinions': opinions,
+                   'cart_items': cart_items}
+        return context
 
 
 # def product(request, product_id):
