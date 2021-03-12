@@ -1,0 +1,24 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+    <strong>{{ viewed_category.name }}</strong>
+
+    <div>
+        {% if meta_products %}
+            {% for meta_product in meta_products %}
+            <img src="{{ meta_product.imageURL }}">
+            <div>
+                <strong>{{ meta_product.name }}</strong>
+<!--                What do you think about display category name one more time?-->
+<!--                <p>category: {{ meta_product.category }}</p>-->
+                <a href="{% url 'meta_product' meta_product.id %}">More...</a>
+                <hr>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Sorry, we're out of stock!</p>
+        {% endif %}
+    </div>
+
+{% endblock content %}

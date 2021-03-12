@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+    <div>
+        {{ customer }}
+        <hr>
+        <div>
+            {% for user_order in user_orders %}
+            <p>No: {{ forloop.counter }} - Order no:{{ user_order.id }}</p>
+            <a href="{% url 'order_history' user_order.id %}">Order Details</a>
+            <hr>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock content %}

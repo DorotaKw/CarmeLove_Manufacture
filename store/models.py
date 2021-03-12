@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db.models import BooleanField, CASCADE, CharField, DateTimeField, DecimalField, \
     F, FloatField, ForeignKey, ImageField, \
-    IntegerField, Model, OneToOneField, SET_NULL, TextField
+    IntegerField, Model, OneToOneField, SET_NULL, TextField, ManyToOneRel
 
 
 class Customer(Model):
@@ -42,19 +42,15 @@ PACKAGE_SIZE = (
 )
 
 
-class Product(Model):
+class MetaProduct(Model):
     class Meta:
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products'
+        verbose_name = 'Meta Product'
+        verbose_name_plural = 'Meta Products'
 
-    name = CharField(max_length=70)
+    name = CharField(max_length=70, unique=True)
     category = ForeignKey(Category, on_delete=SET_NULL, null=True, blank=True)
-    measure = IntegerField(verbose_name='Kind of measure', choices=MEASURE_TYPE)
-    package = IntegerField(verbose_name='Package size', choices=PACKAGE_SIZE)
     description = TextField(max_length=700, null=False, blank=False)
-    price = DecimalField(max_digits=6, decimal_places=2)
     availability = IntegerField(null=False, blank=False)
-    weight = FloatField(null=True, blank=True)
     digital = BooleanField(default=False, null=True, blank=True)
     image = ImageField(null=True, blank=True)
 
@@ -70,6 +66,39 @@ class Product(Model):
         return url
 
 
+class Product(Model):
+    class Meta:
+        verbose_name = 'Product'
+        verbose_name_plural = 'Products'
+
+    meta_product = ForeignKey(MetaProduct, on_delete=CASCADE)
+    measure = IntegerField(verbose_name='Kind of measure', choices=MEASURE_TYPE)
+    package = IntegerField(verbose_name='Package size', choices=PACKAGE_SIZE)
+    price = DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self):
+        return self.meta_product.name
+
+    @property
+    def name(self):
+        name = self.meta_product.name
+        return name
+
+    @property
+    def availability(self):
+        availability = self.meta_product.availability / self.package
+        return availability
+
+    @property
+    def imageURL(self):
+        image = self.meta_product.image
+        if image:
+            url = self.meta_product.image.url
+        else:
+            url = ''
+        return url
+
+
 class Order(Model):
     class Meta:
         verbose_name = 'Order'
@@ -78,16 +107,19 @@ class Order(Model):
     customer = ForeignKey(Customer, on_delete=SET_NULL, null=True, blank=True)
     date_ordered = DateTimeField(auto_now_add=True)
     complete = BooleanField(default=False, null=True, blank=False)
-    transaction_id = IntegerField()
 
     def __str__(self):
         return str(self.id)
 
     @property
-    def transaction_counter(self):
-        transaction_id = Order.objects.all()
-        transaction_id.update(stories_filed=F('stories_filed') + 1)
-        return transaction_id
+    def get_order_no(self):
+        order_no = self.id
+        return order_no
+
+    @property
+    def get_orderitems(self):
+        orderitems = self.orderitem_set.all()
+        return orderitems
 
     @property
     def shipping(self):
@@ -117,6 +149,15 @@ class OrderItem(Model):
     quantity = IntegerField(default=0, null=True, blank=True)
     date_added = DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.product.name
+
+    @property
+    def get_history_items(self):
+        if self.order.complete is True:
+            m_history_items = self.order.orderitems_set.all()
+        return m_history_items
+
     @property
     def get_total(self):
         total = self.product.price * self.quantity
@@ -134,4 +175,28 @@ class ShippingAddress(Model):
 
     def __str__(self):
         return self.address
+
+
+class OrderComment(Model):
+    class Meta:
+        verbose_name = 'Order Comment'
+        verbose_name_plural = 'Orders Comments'
+
+    order = OneToOneField(Order, on_delete=CASCADE, null=True, blank=True)
+    comment = CharField(max_length=400, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.id)
+
+
+class ProductOpinion(Model):
+    product = ForeignKey(MetaProduct, on_delete=SET_NULL, null=True, blank=True)
+    customer = ForeignKey(Customer, on_delete=SET_NULL, null=True, blank=True)
+    rating = IntegerField(null=True, blank=True)
+    title = TextField(max_length=250, null=True, blank=True)
+    opinion = TextField(max_length=1500, null=True, blank=True)
+    date_created = DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
 

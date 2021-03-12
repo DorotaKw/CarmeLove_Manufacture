@@ -1,0 +1,93 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div>
+    <strong>{{ meta_product.category }}</strong>
+</div>
+
+<div>
+    <img src="{{ meta_product.imageURL }}">
+    <div>
+        <strong>{{ meta_product.name }}</strong>
+        <p>category: {{ meta_product.category }}</p>
+        <p>description: {{ meta_product.description }}</p>
+        {% if meta_product.digital %}
+            <p>Digital</p>
+        {% endif %}
+        <div>
+            {% if meta_product.measure == 1 %}
+                <p>Kind of measure: By Weight</p>
+            {% else %}
+                <p>Kind of measure: By Quantity</p>
+            {% endif %}
+        </div>
+    </div>
+    <div>
+        <h3>Available package sizes:</h3>
+        {% for product in products %}
+            {% if product.package == 1 %}
+                <p>Package size: 100 gr</p>
+            {% elif product.package == 2 %}
+                <p>Package size: 250 gr</p>
+            {% elif product.package == 3 %}
+                <p>Package size: 500 gr</p>
+            {% elif product.package == 4 %}
+                <p>Package size: 1 kg</p>
+            {% elif product.package == 5 %}
+                <p>Package size: 1</p>
+            {% elif product.package == 6 %}
+                <p>Package size: 4</p>
+            {% elif product.package == 7 %}
+                <p>Package size: 6</p>
+            {% elif product.package == 8 %}
+                <p>Package size: 12</p>
+            {% else %}
+                <p>Package size: 24</p>
+            {% endif %}
+
+            <p>price: {{ product.price|floatformat:2 }} PLN</p>
+            <p>availability: {{ product.availability }}</p>
+            <p><strong>Buy</strong></p>
+            <hr>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<div>
+    <form method="post">
+        {% csrf_token %}
+        <p>Stars: {{ form.rating }}</p>
+        <p>Title: {{ form.title }}</p>
+        <p>Opinion: {{ form.opinion }}</p>
+        <input type="submit" value="Submit" name="Create Opinion">
+    </form>
+</div>
+
+<div>
+    {% if opinions %}
+        {% for opinion in opinions %}
+            <div>
+                {% if opinion.rating %}
+                <p>Rating (Stars): {{ opinion.rating }}</p>
+                {% endif %}
+                {% if opinion.title %}
+                <p>Title: {{ opinion.title }}</p>
+                {% endif %}
+                {% if opinion.opinion %}
+                <p>Opinion: {{ opinion.opinion }}</p>
+                {% endif %}
+                <p>Customer: {{ opinion.customer }}</p>
+                <p>Date: {{ opinion.date_created }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>This product has no opinin yet. You can be first!</p>
+    {% endif %}
+</div>
+
+{% endblock content %}
+

@@ -18,7 +18,7 @@
         <!--        javascript for paypal -->
 
     <div>
-        <a href="{% url 'cart' %}">Back to Cart</a>
+        <a href="cart.html">Back to Cart</a>
         <p>Order Summary</p>
 
         {% for item in items %}
@@ -35,5 +35,22 @@
         <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
     </div>
 
+
+
+    <div>
+        {% if new_order_comment %}
+            <p>{{ new_order_comment.comment }}</p>
+        {% else %}
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+                    <p>Order Comment: {{ form.comment }}</p>
+                    <input type="submit" value="Submit" name="Add order comment">
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
 {% endblock content %}
 
+<h3>Store</h3>
