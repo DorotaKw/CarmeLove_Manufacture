@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<div>
+    <h3>Order Details</h3>
+    <div>
+        <p>{{ viewed_order.customer }}</p>
+        <p>Complete: {{ viewed_order.complete }}</p>
+        <p>Date: {{ viewed_order.date_ordered.date }} - Time: {{ viewed_order.date_ordered.time }}</p>
+        <hr>
+        <div>
+            <p>Order no: {{ viewed_order.id }}</p>
+            <hr>
+            {% for order_item in order_items %}
+                <div><img src="{{ order_item.product.imageURL }}"></div>
+                <div>Name: {{ order_item.product.name }}</div>
+                <div>Price: {{ order_item.product.price|floatformat:2 }}</div>
+                <div>Quantity: x{{ order_item.quantity }}</div>
+                <div>Total price for product: {{ order_item.get_total|floatformat:2 }}</div>
+            {% endfor %}
+            <p>Total price for order: {{ viewed_order.get_cart_total|floatformat:2 }}</p>
+            <p>Products in order: {{ viewed_order.get_cart_items }}</p>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
