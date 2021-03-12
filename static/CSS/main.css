@@ -23,6 +23,7 @@ body {
     font-size: 100px;
     color: #ffffff;
     font-family: 'Great Vibes', cursive;
+    text-shadow: 2px 2px 2px #5f4d41;
 }
 .carousel-sec-text {
     font-size: 40px;
