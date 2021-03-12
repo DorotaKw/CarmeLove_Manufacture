@@ -60,7 +60,7 @@
             {% endif %}
 
             <p>price: {{ product.price|floatformat:2 }} PLN</p>
-            <p>availability: {{ product.availability }}</p>
+            <p>availability: {{ product.availability|floatformat:"0" }}</p>
             <p><strong>Buy</strong></p>
             <hr>
         {% endfor %}
