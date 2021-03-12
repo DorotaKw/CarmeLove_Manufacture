@@ -28,14 +28,14 @@ class ProfileView(LoginRequiredMixin, ListView):
     context_object_name = 'history_order'
     model = Order
 
-    def get_queryset(self, request):
-        customer = request.user.customer
+    def get_queryset(self):
+        customer = self.request.user.customer
         return Order.objects.filter(customer=customer, complete=True)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
-            'orders_items': history_order.get_orderitems,
-        })
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context.update({
+    #         'orders_items': history_order.get_orderitems,
+    #     })
+    #     return context
 

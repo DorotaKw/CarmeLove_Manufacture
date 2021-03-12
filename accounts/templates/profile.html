@@ -2,12 +2,10 @@
 {% load static %}
 {% block content %}
     <div>
-        {% if history_orders %}
-            {% for history_order in object_list %}
-            <div>
-                {{ history_order.id }}
-            </div>
-            {% endfor %}
-        {% endif% }
+        <p>Hello, {{ customer.name }}!</p>
+        {% for order in object_list %}
+            {{ order.id }}
+        {% endfor %}
+
     </div>
 {% endblock %}
