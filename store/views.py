@@ -12,7 +12,10 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMi
 
 #from django.contrib.admin.views.decorators.staff_member_required import
 
-from .models import Customer, Category, Product, Order, OrderItem, ProductOpinion, MetaProduct, OrderComment
+import json
+
+from .models import Customer, Category, Product, Order, OrderItem,\
+    ProductOpinion, MetaProduct, OrderComment, FavouriteProduct
 from .forms import ProductOpinionForm, OrderCommentForm
 
 
@@ -149,6 +152,28 @@ def checkout(request):
 
 
 def update_item(request):
+    data = json.loads(request.body)
+    product_id = data['productId']   # productId
+    action = data['action']
+    print('Action:', action)
+    print('Product:', product_id)   # productId
+
+    customer = request.user.customer
+    product = Product.objects.get(id=product_id)
+    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+    order_item, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+    if action == 'add':
+        order_item.quantity = (order_item.quantity + 1)
+    elif action == 'remove':
+        order_item.quantity = (order_item.quantity - 1)
+
+    order_item.save()
+
+    if order_item.quantity <= 0:
+        order_item.delete()
+
     return JsonResponse('Product was added', safe=False)
 
 
@@ -262,5 +287,22 @@ def order_history(request, user_order_id):
 
         context = {'history_order': history_order, 'history_items': history_items}
         return render(request, 'order_history.html', context)
+
+
+def favourites(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cart_items = order.get_cart_items
+        user_favourites = FavouriteProduct.objects.filter(customer=customer, favourite=True)
+        context = {'user_favourites': user_favourites, 'cart_items': cart_items}
+        return render(request, 'favourites.html', context)
+    # else:
+    #     items = []
+    #     order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+    #     cart_items = order['get_cart_items']
+
+
 
 
