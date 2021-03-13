@@ -16,7 +16,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMi
 import json
 
 from .models import Customer, Category, Product, Order, OrderItem,\
-    ProductOpinion, MetaProduct, OrderComment, FavouriteProduct
+    ProductOpinion, MetaProduct, FavouriteProduct
 from .forms import ProductOpinionForm, OrderForm
 
 from .utils import *
