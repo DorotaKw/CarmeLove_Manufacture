@@ -1,13 +1,31 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
+
+<div>
+    <p>SIMPLE NAV JUST FOR NOW</p>
+    <p><a href="{% url 'orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'favourites' %}">Favourites</a></p>
+    <p>Products in Cart: {{ cart_items }}</p>
+
+    <div>
+        {% for category in categories %}
+            <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
+        {% endfor %}
+    </div>
+</div>
+
 <div>
     <h3>Order History</h3>
+    <hr>
+    <a href="{% url 'orders_history' %}">Back to Orders History</a>
     <div>
         {{ customer }}
         <hr>
         <div>
             <p>Order no: {{ history_order }}</p>
+            <p>Date: {{ history_order.date_ordered.date }}</p>
+            <p>Time: {{ history_order.date_ordered.time }}</p>
             <hr>
             {% for history_item in history_items %}
                 <div><img src="{{ history_item.product.imageURL }}"></div>

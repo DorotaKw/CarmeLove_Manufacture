@@ -1,224 +1,127 @@
-// var updateBtns = document.getElementsByName('update-cart'
-//
-//
-// for(var i = 0; i < updateBtns.length; i++){
-//     updateBtns[i].addEventListener('click', function(){
-//         var productId= this.dataset.product
-//         var action = this.dataset.action
-//         console.log('productId:',productId, 'action:', action)
-//     })
-// }
-// ************************************************
-// Shopping Cart API
-// ************************************************
+/* Set values + misc */
+var promoCode;
+var promoPrice;
+var fadeTime = 300;
 
-const shoppingCart = function () {
-  // =============================
-  // Private methods and propeties
-  // =============================
-  let cart;
-  for (const x of cart = []){}
-
-      }
-
-  // Constructor
-  function Item(name, price, count) {
-    this.name = name;
-    this.price = price;
-    this.count = count;
-  }
-
-  // Save cart
-  function saveCart() {
-    sessionStorage.setItem('shoppingCart', JSON.stringify(cart));
-  }
-
-  // Load cart
-  function loadCart() {
-    let cart;
-    cart = JSON.parse(sessionStorage.getItem('shoppingCart'));
-  }
-
-  if (sessionStorage.getItem("shoppingCart") != null) {
-    loadCart();
-  }
-
-
-  // =============================
-  // Public methods and propeties
-  // =============================
-const obj = {};
-
-// Add to cart
-  obj.addItemToCart = function (name, price, count) {
-    let product;
-    for (product in cart) {
-      if (cart[product].name === name) {
-        cart[product].count++;
-        saveCart();
-        return;
-      }
-    }
-    const item = new Item(name, price, count);
-    cart.push(item);
-    saveCart();
-  };
-  // Set count from item
-  obj.setCountForItem = function(name, count) {
-    for(var i in cart) {
-      if (cart[i].name === name) {
-        cart[i].count = count;
-        break;
-      }
-    }
-  };
-  // Remove item from cart
-  obj.removeItemFromCart = function(name) {
-      for(var item in cart) {
-        if(cart[item].name === name) {
-          cart[item].count --;
-          if(cart[item].count === 0) {
-            cart.splice(item, 1);
-          }
-          break;
-        }
-    }
-    saveCart();
-  }
-
-  // Remove all items from cart
-  obj.removeItemFromCartAll = function(name) {
-    for(var item in cart) {
-      if(cart[item].name === name) {
-        cart.splice(item, 1);
-        break;
-      }
-    }
-    saveCart();
-  }
-
-  // Clear cart
-  obj.clearCart = function() {
-    cart = [];
-    saveCart();
-  }
-
-  // Count cart
-  obj.totalCount = function() {
-    var totalCount = 0;
-    for(var item in cart) {
-      totalCount += cart[item].count;
-    }
-    return totalCount;
-  }
-
-  // Total cart
-  obj.totalCart = function() {
-    var totalCart = 0;
-    for(var item in cart) {
-      totalCart += cart[item].price * cart[item].count;
-    }
-    return Number(totalCart.toFixed(2));
-  }
-
-  // List cart
-  obj.listCart = function() {
-    var cartCopy = [];
-    for(i in cart) {
-      item = cart[i];
-      itemCopy = {};
-      for(p in item) {
-        itemCopy[p] = item[p];
-
-      }
-      itemCopy.total = Number(item.price * item.count).toFixed(2);
-      cartCopy.push(itemCopy)
-    }
-    return cartCopy;
-  }
-
-  // cart : Array
-  // Item : Object/Class
-  // addItemToCart : Function
-  // removeItemFromCart : Function
-  // removeItemFromCartAll : Function
-  // clearCart : Function
-  // countCart : Function
-  // totalCart : Function
-  // listCart : Function
-  // saveCart : Function
-  // loadCart : Function
-  return obj;
-})();
-
-
-// *****************************************
-// Triggers / Events
-// *****************************************
-// Add item
-$('.add-to-cart').click(function(event) {
-  event.preventDefault();
-  var name = $(this).data('name');
-  var price = Number($(this).data('price'));
-  shoppingCart.addItemToCart(name, price, 1);
-  displayCart();
+/* Assign actions */
+$('.quantity input').change(function() {
+  updateQuantity(this);
 });
 
-// Clear items
-$('.clear-cart').click(function() {
-  shoppingCart.clearCart();
-  displayCart();
+$('.remove button').click(function() {
+  removeItem(this);
 });
 
+$(document).ready(function() {
+  updateSumItems();
+});
 
-function displayCart() {
-  var cartArray = shoppingCart.listCart();
-  var output = "";
-  for(var i in cartArray) {
-    output += "<tr>"
-      + "<td>" + cartArray[i].name + "</td>"
-      + "<td>(" + cartArray[i].price + ")</td>"
-      + "<td><div class='input-group'><button class='minus-item input-group-addon btn btn-primary' data-name=" + cartArray[i].name + ">-</button>"
-      + "<input type='number' class='item-count form-control' data-name='" + cartArray[i].name + "' value='" + cartArray[i].count + "'>"
-      + "<button class='plus-item btn btn-primary input-group-addon' data-name=" + cartArray[i].name + ">+</button></div></td>"
-      + "<td><button class='delete-item btn btn-danger' data-name=" + cartArray[i].name + ">X</button></td>"
-      + " = "
-      + "<td>" + cartArray[i].total + "</td>"
-      +  "</tr>";
+$('.promo-code-cta').click(function() {
+
+  promoCode = $('#promo-code').val();
+
+  if (promoCode == '10off' || promoCode == '10OFF') {
+    //If promoPrice has no value, set it as 10 for the 10OFF promocode
+    if (!promoPrice) {
+      promoPrice = 10;
+    } else if (promoCode) {
+      promoPrice = promoPrice * 1;
+    }
+  } else if (promoCode != '') {
+    alert("Invalid Promo Code");
+    promoPrice = 0
+
+    ;
   }
-  $('.show-cart').html(output);
-  $('.total-cart').html(shoppingCart.totalCart());
-  $('.total-count').html(shoppingCart.totalCount());
+  //If there is a promoPrice that has been set (it means there is a valid promoCode input) show promo
+  if (promoPrice) {
+    $('.summary-promo').removeClass('hide');
+    $('.promo-value').text(promoPrice.toFixed(2));
+    recalculateCart(true);
+  }
+});
+
+/* Recalculate cart */
+function recalculateCart(onlyTotal) {
+  var subtotal = 0;
+
+  /* Sum up row totals */
+  $('.basket-product').each(function() {
+    subtotal += parseFloat($(this).children('.subtotal').text());
+  });
+
+  /* Calculate totals */
+  var total = subtotal;
+
+  //If there is a valid promoCode, and subtotal < 10 subtract from total
+  var promoPrice = parseFloat($('.promo-value').text());
+  if (promoPrice) {
+    if (subtotal >= 10) {
+      total -= promoPrice;
+    } else {
+      alert('Order must be more than £10 for Promo code to apply.');
+      $('.summary-promo').addClass('hide');
+    }
+  }
+
+  /*If switch for update only total, update only total display*/
+  if (onlyTotal) {
+    /* Update total display */
+    $('.total-value').fadeOut(fadeTime, function() {
+      $('#basket-total').html(total.toFixed(2));
+      $('.total-value').fadeIn(fadeTime);
+    });
+  } else {
+    /* Update summary display. */
+    $('.final-value').fadeOut(fadeTime, function() {
+      $('#basket-subtotal').html(subtotal.toFixed(2));
+      $('#basket-total').html(total.toFixed(2));
+      if (total == 0) {
+        $('.checkout-cta').fadeOut(fadeTime);
+      } else {
+        $('.checkout-cta').fadeIn(fadeTime);
+      }
+      $('.final-value').fadeIn(fadeTime);
+    });
+  }
 }
 
-// Delete item button
+/* Update quantity */
+function updateQuantity(quantityInput) {
+  /* Calculate line price */
+  var productRow = $(quantityInput).parent().parent();
+  var price = parseFloat(productRow.children('.price').text());
+  var quantity = $(quantityInput).val();
+  var linePrice = price * quantity;
 
-$('.show-cart').on("click", ".delete-item", function(event) {
-  var name = $(this).data('name')
-  shoppingCart.removeItemFromCartAll(name);
-  displayCart();
-})
+  /* Update line price display and recalc cart totals */
+  productRow.children('.subtotal').each(function() {
+    $(this).fadeOut(fadeTime, function() {
+      $(this).text(linePrice.toFixed(2));
+      recalculateCart();
+      $(this).fadeIn(fadeTime);
+    });
+  });
 
+  productRow.find('.item-quantity').text(quantity);
+  updateSumItems();
+}
 
-// -1
-$('.show-cart').on("click", ".minus-item", function(event) {
-  var name = $(this).data('name')
-  shoppingCart.removeItemFromCart(name);
-  displayCart();
-})
-// +1
-$('.show-cart').on("click", ".plus-item", function(event) {
-  var name = $(this).data('name')
-  shoppingCart.addItemToCart(name);
-  displayCart();
-})
+function updateSumItems() {
+  var sumItems = 0;
+  $('.quantity input').each(function() {
+    sumItems += parseInt($(this).val());
+  });
+  $('.total-items').text(sumItems);
+}
 
-// Item count input
-$('.show-cart').on("change", ".item-count", function(event) {
-   var name = $(this).data('name');
-   var count = Number($(this).val());
-  shoppingCart.setCountForItem(name, count);
-  displayCart();
-});
-
-displayCart();
+/* Remove item from cart */
+function removeItem(removeButton) {
+  /* Remove row from DOM and recalc cart total */
+  var productRow = $(removeButton).parent().parent();
+  productRow.slideUp(fadeTime, function() {
+    productRow.remove();
+    recalculateCart();
+    updateSumItems();
+  });
+}

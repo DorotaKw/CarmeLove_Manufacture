@@ -1,0 +1,11 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+    <div>
+        <p>Hello, {{ customer.name }}!</p>
+        {% for order in object_list %}
+            {{ order.id }}
+        {% endfor %}
+
+    </div>
+{% endblock %}

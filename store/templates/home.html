@@ -2,7 +2,130 @@
 {% load static %}
 {% block content %}
 <div>
-    <p>{{ about }}</p>
-</div>
-{% endblock content %}
+<!-- baner -->
+  <section>
+    <div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+      <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="0" class="active"
+          aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleFade" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      </div>
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="{% static 'images/strawberry_cupcakes.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5 class="carousel-main-text">CarmeLove</h5>
+            <p class="carousel-sec-text"></p>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/cake_pops.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5 class="carousel-main-text">Ręcznie robione słodycze</h5>
+            <p class="carousel-sec-text"></p>
+          </div>
+        </div>
+        <div class="carousel-item">
+          <img src="{% static 'images/gingerbreads.jpg' %}" class="d-block w-100" alt="...">
+          <div class="carousel-caption d-none d-md-block">
+            <h5 class="carousel-main-text">Słodycze tylko z naturalnych składników</h5>
+            <p class="carousel-sec-text"></p>
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+    <div class="container-fluid position-static">
+      <div class="row bg-white justify-content-center align-items-center" style="height: 5vh">
+      </div>
+    </div>
+  </section>
 
+  <!-- our mission -->
+  <section class="bg-white p-5 text-center">
+    <div id="our-mission" class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <h1 class="display-2">O Nas</h1>
+          <p class="lead">
+            Jesteśmy rodzinna firmą z tradycjami i zamiłowaniem do cukiernictwa. Sami wytwarzamy nasze
+            słodycze,
+            używając do tego  tylko najlepszych produktów, pozbawionych sztucznych barwników i wypełniaczy
+            smaku. Do
+            pracy podchodzimy z pasją po to, aby zapewnić naszym klientom usługi oraz produkty najwyższej
+            jakości.
+            Sprawdź nas!
+          </p>
+          <br>
+        </div>
+      </div>
+      <div class="row row-cols-1 row-cols-md-3 g-4 mx-auto">
+        <div class="col">
+          <div class="card">
+            <img src="{% static 'images/pops_hearts.jpg' %}" class="card-img-top" alt="Pops_Hearts">
+            <div class="card-body">
+              <h5 class="card-title">Robimy słodycze!</h5>
+              <p class="card-text">Zajmujemy się wytwarzaniem słodyczy z ekologicznych produktów. Wszystko
+                odbywa się na
+                oczach naszych gości! Serdecznie zapraszamy osoby indywidualne jak i grupy.</p>
+              <a href="#" class="btn btn-primary">Czytaj więcej</a>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <img src="{% static 'images/candybar.jpg' %}" class="card-img-top" alt="Candy_Bar">
+            <div class="card-body">
+              <h5 class="card-title">Obsługujemy imprezy</h5>
+              <p class="card-text">CarmeLove świetnie uatrakcyjni każdą imprezę. Chcesz zaskoczyć swoich gosći niezapomnianym widokiem łakoci? Skontaktuj się z nami, a Twoje przyjęcie będzie najsłodsze na świecie!
+              </p>
+              <a href="#" class="btn btn-primary">Czytaj więcej</a>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card">
+            <img src="{% static 'images/yoghurt_berries.jpg' %}" class="card-img-top" alt="Yoghyrt_Berries">
+            <div class="card-body">
+              <h5 class="card-title">CarmeLove warsztaty</h5>
+              <p class="card-text">Zapraszamy wszystkich na warsztaty i pokazy ręcznie wytwarzanych
+                słodyczy – lizaków,
+                cukierków, ciastek i innych – dotknij, poczuj i spróbuj jak to jest być cukiernikiem!</p>
+              <a href="#" class="btn btn-primary">Czytaj więcej</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- our shop -->
+  <section class="bg-white p-5 text-center">
+    <div id="our-shop" class="container-fluid">
+      <div class="row">
+        <div class="col"><br>
+          <h1 id="h1_our_shop" class="display-2">100% naturalne składniki</h1>
+          <p class="lead">
+            Produkty manufaktury - CarmeLove są najbardziej
+            naturalne ze wszystkich słodyczy na rynku.
+          </p>
+          <a href="#" id="btn_our_shop" class="btn"><i class="icon-basket-1"></i> Kup w sklepie
+            internetowym <i class="icon-right-open"></i></a>
+        </div>
+        <div class="col">
+          <img src="{% static 'images/shopping_cart.png' %}" class="img-fluid" alt="Shopping_Cart">
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% endblock content %}

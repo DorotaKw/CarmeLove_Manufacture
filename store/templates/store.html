@@ -1,6 +1,26 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
+
+    <div>
+        <p>SIMPLE NAV JUST FOR NOW</p>
+        <p><a href="{% url 'orders_history' %}">Orders History</a></p>
+        <p><a href="{% url 'favourites' %}">Favourites</a></p>
+        <hr>
+        <p><a href="{% url 'accounts:sign_up' %}">Sign Up</a></p>
+        <p><a href="{% url 'accounts:login' %}">Login</a></p>
+        <p><a href="{% url 'accounts:logout' %}">Logout</a></p>
+        <p><a href="{% url 'accounts:password_change' %}">Password Change</a></p>
+        <hr>
+        <p>Products in Cart: {{ cart_items }}</p>
+
+        <div>
+            {% for category in categories %}
+                <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
+            {% endfor %}
+        </div>
+    </div>
+
     <div>
         {% for meta_product in meta_products %}
         <img src="{{ meta_product.imageURL }}">
