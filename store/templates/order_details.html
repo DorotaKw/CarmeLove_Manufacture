@@ -20,6 +20,7 @@
             {% endfor %}
             <p>Total price for order: {{ viewed_order.get_cart_total|floatformat:2 }}</p>
             <p>Products in order: {{ viewed_order.get_cart_items }}</p>
+            <p>Order comment: {{ order_comment }}</p>
         </div>
     </div>
 </div>
