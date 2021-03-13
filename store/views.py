@@ -1,15 +1,16 @@
 import datetime
 
-#from django.contrib.auth.decorators import login_required
+
+from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import ListView, CreateView
-
+from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-
+from django.views.generic import ListView, CreateView
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 #from django.contrib.admin.views.decorators.staff_member_required import
 
 import json
@@ -17,6 +18,8 @@ import json
 from .models import Customer, Category, Product, Order, OrderItem,\
     ProductOpinion, MetaProduct, OrderComment, FavouriteProduct
 from .forms import ProductOpinionForm, OrderCommentForm
+
+from .utils import *
 
 
 class StaffRequiredMixin(UserPassesTestMixin):
@@ -70,36 +73,33 @@ def completed_order_details(request, completed_order_details_id):
 
 
 def home(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
+
+    cart_items = data['cart_items']
+
     categories = Category.objects.all()
     about = 'Hi! We are small Manufacture of Sweets!'
     context = {'categories': categories, 'cart_items': cart_items, 'about': about}
     return render(request, 'home.html', context)
 
 
-def store(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
-    categories = Category.objects.all()
-    meta_products = MetaProduct.objects.all()
-    # products = Product.objects.all()
-    context = {'categories': categories, 'meta_products': meta_products, 'cart_items': cart_items}   #'products': products,
-    return render(request, 'store.html', context)
+class StoreView(ListView):
+    template_name = 'store.html'
+    context_object_name = 'meta_products'
+    model = MetaProduct
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = check_user_auth(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        context.update({
+            'categories': Category.objects.all(),
+            'cart_items': cart_items,
+        })
+        return context
+
+    def get_queryset(self):
+        return MetaProduct.objects.all().order_by('name')
 
 
 class CategoriesView(ListView):
@@ -130,30 +130,24 @@ class CategoryView(ListView):
 
 
 def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
 
-    context = {'items': items, 'order': order, 'cart_items': cart_items}
+    cart_items = data['cart_items']
+    order = data['order']
+    items = data['items']
+    categories = Category.objects.all()
+
+    context = {'categories': categories, 'items': items, 'order': order, 'cart_items': cart_items}
     return render(request, 'cart.html', context)
 
 
 def checkout(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
+
+    cart_items = data['cart_items']
+    order = data['order']
+    items = data['items']
+    categories = Category.objects.all()
         
     form = OrderCommentForm()
     if request.method == 'POST':
@@ -167,7 +161,8 @@ def checkout(request):
     current_order = Order.objects.get(id=order.id)
     order_comment = OrderComment.objects.filter(order=current_order)
 
-    context = {'items': items, 'order': order,
+    context = {'categories': categories,
+               'items': items, 'order': order,
                'cart_items': cart_items,
                'form': form, 'order_comment': order_comment}
     return render(request, 'checkout.html', context)
@@ -201,11 +196,31 @@ def update_item(request):
 
 def process_order(request):
     transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
     else:
-        print('User is not logged in...')
+        customer, order = quest_order(request, data)
+
+    total = float(data['form']['total'])
+    order.transaction_id = transaction_id
+
+    if total == order.get_cart_total:
+        order.complete = True
+    order.save()
+
+    if order.shipping is True:
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            address=data['shipping']['address'],
+            city=data['shipping']['city'],
+            state=data['shipping']['state'],
+            zipcode=data['shipping']['zipcode'],
+        )
+
     return JsonResponse('Payment submitted...', safe=False)
 
 
@@ -231,42 +246,6 @@ class MetaProductView(ListView):
                    'cart_items': cart_items}
         return context
 
-
-# def product(request, product_id):
-#     if request.user.is_authenticated:
-#         customer = request.user.customer
-#         order, created = Order.objects.get_or_create(customer=customer, complete=False)
-#         items = order.orderitem_set.all()
-#         cart_items = order.get_cart_items
-#         form = ProductOpinionForm()
-#         viewed_product = Product.objects.get(id=product_id)
-#         opinions = ProductOpinion.objects.filter(product=viewed_product)
-#         if request.method == 'POST':
-#             form = ProductOpinionForm(request.POST)
-#             if form.is_valid():
-#                 new_opinion = form.save(commit=False)
-#                 new_opinion.customer = request.user.customer
-#                 new_opinion.product = viewed_product
-#                 new_opinion.save()
-#                 user_new_opinion = new_opinion
-#                 context = {'product': viewed_product,
-#                            'form': form,
-#                            'user_new_opinion': user_new_opinion,
-#                            'opinions': opinions,
-#                            'cart_items': cart_items}
-#                 return render(request, 'product.html', context)
-#     else:
-#         items = []
-#         order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-#         cart_items = order['get_cart_items']
-#         # for now it's the only idea I have, it's working, but view is too fat.
-#         # maybe JS or/and CSS will help?
-#         form = None
-#
-#     viewed_product = Product.objects.get(id=product_id)
-#     opinions = ProductOpinion.objects.filter(product=viewed_product)
-#     context = {'product': viewed_product, 'form': form, 'opinions': opinions, 'cart_items': cart_items}
-#     return render(request, 'product.html', context)
 
 def orders_history(request):
     if request.user.is_authenticated:
