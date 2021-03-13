@@ -90,7 +90,7 @@ class StoreView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart_item = check_user_auth(request=self.request)
+        cart_item = set_initial_cart_status(request=self.request)
         cart_items = cart_item.get('cart_items')
         context.update({
             'categories': Category.objects.all(),
