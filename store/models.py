@@ -19,9 +19,18 @@ class Category(Model):
         verbose_name_plural = 'Categories'
 
     name = CharField(max_length=30)
+    image = ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    @property
+    def imageURL(self):
+        if self.image:
+            url = self.image.url
+        else:
+            url = ''
+        return url
 
 
 MEASURE_TYPE = (

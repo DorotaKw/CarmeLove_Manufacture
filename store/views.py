@@ -88,6 +88,15 @@ def store(request):
     return render(request, 'store.html', context)
 
 
+class CategoriesView(ListView):
+    template_name = 'categories.html'
+    context_object_name = 'categories'
+    model = Category
+
+    def get_queryset(self):
+        return Category.objects.order_by('name')
+
+
 def category(request, category_id):
     if request.user.is_authenticated:
         customer = request.user.customer

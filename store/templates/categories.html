@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div>
+    {% if categories %}
+        <div>
+            {% for category in object_list %}
+                <div>
+                    <img src="{{ category.imageURL }}">
+                    <p><strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong></p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{% endblock content %}
