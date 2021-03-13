@@ -66,18 +66,17 @@
         {% endfor %}
 
     </div>
-
-</div>
-
-<div>
-    <form method="post">
-        {% csrf_token %}
-        <p>Stars: {{ form.rating }}</p>
-        <p>Title: {{ form.title }}</p>
-        <p>Opinion: {{ form.opinion }}</p>
-        <input type="submit" value="Submit" name="Create Opinion">
-    </form>
-</div>
+{% if user.is_authenticated %}
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <p>Stars: {{ form.rating }}</p>
+            <p>Title: {{ form.title }}</p>
+            <p>Opinion: {{ form.opinion }}</p>
+            <input type="submit" value="Submit" name="Create Opinion">
+        </form>
+    </div>
+{% endif %}
 
 <div>
     {% if opinions %}
@@ -98,7 +97,9 @@
             <hr>
         {% endfor %}
     {% else %}
-        <p>This product has no opinin yet. You can be first!</p>
+        {% if user.is_authenticated %}
+        <p>This product has no opinion yet. You can be first!</p>
+        {% endif %}
     {% endif %}
 </div>
 
