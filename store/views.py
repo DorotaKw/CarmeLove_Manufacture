@@ -111,23 +111,22 @@ class CategoriesView(ListView):
         return Category.objects.order_by('name')
 
 
-def category(request, category_id):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer,
-                                                     complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
-    categories = Category.objects.all()
-    viewed_category = Category.objects.get(id=category_id)
-    meta_products = MetaProduct.objects.filter(category=category_id).order_by('name').all()
-    context = {'categories': categories, 'viewed_category': viewed_category,
-               'meta_products': meta_products, 'cart_items': cart_items}
-    return render(request, 'category.html', context)
+class CategoryView(ListView):
+    template_name = 'category.html'
+    model = Category
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        categories = Category.objects.all()
+        viewed_category = get_object_or_404(Category, id=self.kwargs['category_id'])
+        meta_products = MetaProduct.objects.filter(category=self.kwargs['category_id']).order_by('name').all()
+        context = {'categories': categories,
+                   'viewed_category': viewed_category,
+                   'meta_products': meta_products,
+                   'cart_items': cart_items}
+        return context
 
 
 def cart(request):
