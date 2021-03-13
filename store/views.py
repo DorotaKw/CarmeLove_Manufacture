@@ -17,7 +17,7 @@ import json
 
 from .models import Customer, Category, Product, Order, OrderItem,\
     ProductOpinion, MetaProduct, OrderComment, FavouriteProduct
-from .forms import ProductOpinionForm, OrderCommentForm
+from .forms import ProductOpinionForm, OrderForm
 
 from .utils import *
 
@@ -51,7 +51,8 @@ class OrdersView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
 def order_details(request, order_details_id):
     viewed_order = Order.objects.get(id=order_details_id)
     order_items = viewed_order.get_orderitems
-    context = {'viewed_order': viewed_order, 'order_items': order_items}
+    order_comment = viewed_order.comment
+    context = {'viewed_order': viewed_order, 'order_items': order_items, 'order_comment': order_comment}
     return render(request, 'order_details.html', context)
 
 
@@ -143,22 +144,26 @@ def checkout(request):
     items = data['items']
     categories = Category.objects.all()
         
-    form = OrderCommentForm()
+    form = OrderForm()
     if request.method == 'POST':
-        form = OrderCommentForm(request.POST)
+        form = OrderForm(request.POST)
         if form.is_valid():
             new_order_comment = form.save(commit=False)
             new_order_comment.order = order
             new_order_comment.save()
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            context = {}
+            context['new_order_comment'] = new_order_comment
+            # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-    current_order = Order.objects.get(id=order.id)
-    order_comment = OrderComment.objects.filter(order=current_order)
+    """Problem with unauthorized customer"""
+    order = Order.objects.get(id=order.id)
+    order_comment = order.comment
 
     context = {'categories': categories,
                'items': items, 'order': order,
                'cart_items': cart_items,
-               'form': form, 'order_comment': order_comment}
+               'form': form,
+               'order_comment': order_comment}
     return render(request, 'checkout.html', context)
 
 
@@ -232,6 +237,16 @@ class MetaProductView(ListView):
         viewed_meta_product = get_object_or_404(MetaProduct, id=self.kwargs['meta_product_id'])
         products = viewed_meta_product.product_set.all()
         opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
+        if self.request.method == 'POST':
+            form = ProductOpinionForm(self.request.POST)
+            if form.is_valid():
+                new_opinion = form.save(commit=False)
+                new_opinion.customer = self.request.user.customer
+                new_opinion.product = viewed_meta_product
+                new_opinion.save()
+                user_new_opinion = new_opinion
+                context['user_new_opinion'] = user_new_opinion
+
         context = {'categories': categories,
                    'meta_product': viewed_meta_product,
                    'products': products,
