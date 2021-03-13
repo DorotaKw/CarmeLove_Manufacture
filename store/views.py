@@ -150,26 +150,26 @@ def checkout(request):
     items = data['items']
     categories = Category.objects.all()
         
-    form = OrderForm()
-    if request.method == 'POST':
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            new_order_comment = form.save(commit=False)
-            new_order_comment.order = order
-            new_order_comment.save()
-            context = {}
-            context['new_order_comment'] = new_order_comment
-            # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-    """Problem with unauthorized customer"""
-    order = Order.objects.get(id=order.id)
-    order_comment = order.comment
+    # form = OrderForm()
+    # if request.method == 'POST':
+    #     form = OrderForm(request.POST)
+    #     if form.is_valid():
+    #         new_order_comment = form.save(commit=False)
+    #         new_order_comment.order = order
+    #         new_order_comment.save()
+    #         context = {}
+    #         context['new_order_comment'] = new_order_comment
+    #         # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    #
+    # """Problem with unauthorized customer"""
+    # order = Order.objects.get(id=order.id)
+    # order_comment = order.comment
 
     context = {'categories': categories,
                'items': items, 'order': order,
-               'cart_items': cart_items,
-               'form': form,
-               'order_comment': order_comment}
+               'cart_items': cart_items}
+               # 'form': form,
+               # 'order_comment': order_comment}
     return render(request, 'checkout.html', context)
 
 
