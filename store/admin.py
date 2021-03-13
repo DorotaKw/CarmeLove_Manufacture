@@ -9,7 +9,6 @@ admin.site.register(Product)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(ShippingAddress)
-admin.site.register(OrderComment)
 admin.site.register(ProductOpinion)
 admin.site.register(FavouriteProduct)
 

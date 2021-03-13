@@ -121,6 +121,7 @@ class Order(Model):
     customer = ForeignKey(Customer, on_delete=SET_NULL, null=True, blank=True)
     date_ordered = DateTimeField(auto_now_add=True)
     complete = BooleanField(default=False, null=True, blank=False)
+    comment = CharField(max_length=400, null=True, blank=True)
 
     def __str__(self):
         return str(self.id)
@@ -189,18 +190,6 @@ class ShippingAddress(Model):
 
     def __str__(self):
         return self.address
-
-
-class OrderComment(Model):
-    class Meta:
-        verbose_name = 'Order Comment'
-        verbose_name_plural = 'Orders Comments'
-
-    order = OneToOneField(Order, on_delete=CASCADE, null=True, blank=True)
-    comment = CharField(max_length=400, null=True, blank=True)
-
-    def __str__(self):
-        return str(self.id)
 
 
 class ProductOpinion(Model):
