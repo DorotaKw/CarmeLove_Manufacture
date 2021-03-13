@@ -6,6 +6,7 @@ urlpatterns = [
     # path('', home, name="home"),
     path('', home, name="home"),
     path('store/', store, name="store"),
+    path('categories/', CategoriesView.as_view(), name="categories"),
     path('<int:category_id>/category/', category, name="category"),
     path('cart/', cart, name="cart"),
     path('checkout/', checkout, name="checkout"),
