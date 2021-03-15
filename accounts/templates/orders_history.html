@@ -3,14 +3,15 @@
 {% block content %}
 
 <div>
+    <p><a href="{% url 'accounts:profile' %}">Profile</a></p>
     <p>SIMPLE NAV JUST FOR NOW</p>
-    <p><a href="{% url 'orders_history' %}">Orders History</a></p>
-    <p><a href="{% url 'favourites' %}">Favourites</a></p>
+    <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'store:favourites' %}">Favourites</a></p>
     <p>Products in Cart: {{ cart_items }}</p>
 
     <div>
         {% for category in categories %}
-            <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
         {% endfor %}
     </div>
 </div>
@@ -27,7 +28,7 @@
             <p>Time: {{ user_order.date_ordered.time }}</p>
             <p>Total: {{ user_order.get_cart_total }}</p>
             <p>Items: {{ user_order.get_cart_items }}</p>
-            <a href="{% url 'order_history' user_order.id %}">Order Details</a>
+            <a href="{% url 'accounts:order_history' user_order.id %}">Order Details</a>
             <hr>
             {% endfor %}
         </div>

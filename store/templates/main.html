@@ -79,7 +79,7 @@
             <!--navbar-left-->
             <!--navbar-center-->
             <div class="nicdark_relative grid_2">
-              <a href="{% url 'home' %}"><img class="zoom_2"
+              <a href="{% url 'store:home' %}"><img class="zoom_2"
                   style="width:100%; margin-top: -70px; height: auto;position: absolute; left: 0px;"
                   src="{% static 'images/carmelove_logo.png' %}"></a>
             </div>
@@ -92,16 +92,16 @@
                     <a id="link4" href="#">Sklep</a>
                     <ul class="sub-menu">
                       <li>
-                        <a href="{% url 'store' %}">Sklep</a>
+                        <a href="{% url 'store:store' %}">Sklep</a>
                       </li>
                       <li>
-                        <a href="{% url 'cart' %}">Koszyk</a>
+                        <a href="{% url 'store:cart' %}">Koszyk</a>
                       </li>
                       <li>
-                        <a href="#">Moje konto</a>
+                        <a href="{% url 'accounts:login' %}">Moje konto</a>
                       </li>
                       <li>
-                        <a href="{% url 'checkout' %}">Podsumowanie Zakupów</a>
+                        <a href="{% url 'store:checkout' %}">Podsumowanie Zakupów</a>
                       </li>
                       <li>
                         <a href="#">Regulamin Sklepu Internetowego</a>
@@ -120,7 +120,7 @@
                 <ul style="margin:0px;" class="menu">
                   <li style="padding:15px; margin:0px;">
                       <a style="margin:0px;" class="zoom"
-                      href="{% url 'cart' %}"><img style="width: 30px; margin-top:  0px;" src="{% static 'images/cart.png' %}"></a></li>
+                      href="{% url 'store:cart' %}"><img style="width: 30px; margin-top:  0px;" src="{% static 'images/cart.png' %}"></a></li>
                 </ul>
               </div>
             </div>

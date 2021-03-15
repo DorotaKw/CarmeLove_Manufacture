@@ -3,8 +3,9 @@
 {% block content %}
 
 <div>
+    <p><a href="{% url 'accounts:profile' %}">Profile</a></p>
     <h1>Completed Orders</h1>
-    <a href="{% url 'orders' %}">Back to All Orders</a>
+    <a href="{% url 'accounts:orders' %}">Back to All Orders</a>
     <ul>
         {% for completed_order in object_list %}
             <ul>
@@ -12,7 +13,7 @@
                 <p>Customer: {{ completed_order.customer }} - Complete: {{ completed_order.complete }}</p>
                 <p>Date: {{ completed_order.date_ordered.date }} - Time: {{ completed_order.date_ordered.time }}</p>
                 <p>Total: {{ completed_order.get_cart_total }} - Items: {{ completed_order.get_cart_items }}</p>
-                <a href="{% url 'completed_order_details' completed_order.id %}">Order details</a>
+                <a href="{% url 'accounts:completed_order_details' completed_order.id %}">Order details</a>
                 <hr>
             </ul>
         {% endfor %}

@@ -2,7 +2,9 @@
 {% load static %}
 {% block content %}
 <div>
+    <p><a href="{% url 'accounts:profile' %}">Profile</a></p>
     <h3>Order Completed Details</h3>
+    <a href="{% url 'accounts:orders_completed' %}">Orders Completed</a>
     <div>
         <p>{{ viewed_order_completed.customer }}</p>
         <p>Complete: {{ viewed_order_completed.complete }}</p>
