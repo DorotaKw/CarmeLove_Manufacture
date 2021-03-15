@@ -295,6 +295,14 @@ def order_history(request, user_order_id):
         return render(request, 'order_history.html', context)
 
 
+def ordered_products(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        user_orders = Order.objects.filter(customer=customer, complete=True)
+        context = {'customer': customer, 'user_orders': user_orders}
+        return render(request, 'ordered_products.html', context)
+
+
 def favourites(request):
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -308,6 +316,8 @@ def favourites(request):
     #     items = []
     #     order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
     #     cart_items = order['get_cart_items']
+
+
 
 
 

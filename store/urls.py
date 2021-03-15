@@ -15,6 +15,7 @@ urlpatterns = [
     path('<int:meta_product_id>/meta_product/', meta_product, name="meta_product"),
     path('orders_history/', orders_history, name="orders_history"),
     path('<int:user_order_id>/order_history/', order_history, name="order_history"),
+    path('ordered_products/', ordered_products, name='ordered_products'),
     path('orders/', OrdersView.as_view(), name='orders'),
     path('orders/<int:order_details_id>/order_details/', order_details, name='order_details'),
     path('orders/orders_completed/', OrdersCompletedView.as_view(), name='orders_completed'),
