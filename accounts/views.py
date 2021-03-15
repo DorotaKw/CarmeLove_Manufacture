@@ -5,9 +5,14 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-from store.models import Customer, Order, OrderItem
+from store.models import Customer, Order, OrderItem, FavouriteProduct
 
 from .forms import SignUpForm
+
+
+def hello(request):
+    context = {'hello_message': 'Hi!'}
+    return render(request, 'hello.html', context)
 
 
 class StaffRequiredMixin(UserPassesTestMixin):
@@ -21,13 +26,13 @@ class SubmittableLoginView(LoginView):
 
 class SubmittablePasswordChangeView(PasswordChangeView):
     template_name = 'login_form.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('store:home')
 
 
 class SignUpView(CreateView):
     template_name = 'login_form.html'
     form_class = SignUpForm
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('accounts:login')
 
 
 class ProfileView(LoginRequiredMixin, ListView):
@@ -65,6 +70,22 @@ def order_history(request, user_order_id):
 
         context = {'history_order': history_order, 'history_items': history_items}
         return render(request, 'order_history.html', context)
+
+
+# view for Customer
+def favourites(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cart_items = order.get_cart_items
+        user_favourites = FavouriteProduct.objects.filter(customer=customer, favourite=True)
+        context = {'user_favourites': user_favourites, 'cart_items': cart_items}
+        return render(request, 'favourites.html', context)
+    # else:
+    #     items = []
+    #     order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+    #     cart_items = order['get_cart_items']
 
 
 # view for Admin

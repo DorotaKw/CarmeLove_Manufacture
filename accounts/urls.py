@@ -6,6 +6,7 @@ from .views import *
 app_name = 'accounts'
 
 urlpatterns = [
+    path('', hello, name='hello'),
     path('login/', SubmittableLoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('password_change/', SubmittablePasswordChangeView.as_view(),
@@ -16,6 +17,7 @@ urlpatterns = [
     # for Customer
     path('orders_history/', orders_history, name="orders_history"),
     path('orders_history/<int:user_order_id>/order_history/', order_history, name="order_history"),
+    path('favourites/', favourites, name='favourites'),
 
     # for Admin
     path('orders/', OrdersView.as_view(), name='orders'),

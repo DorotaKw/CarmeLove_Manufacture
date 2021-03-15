@@ -10,7 +10,7 @@ from django.views.generic import ListView
 import json
 
 from .models import Customer, Category, Product, Order, OrderItem,\
-    ProductOpinion, MetaProduct, FavouriteProduct
+    ProductOpinion, MetaProduct
 from .forms import ProductOpinionForm, OrderForm
 
 from .utils import *
@@ -232,22 +232,4 @@ def meta_product(request, meta_product_id):
                'opinions': opinions,
                'cart_items': cart_items}
     return render(request, 'meta_product.html', context)
-
-
-def favourites(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-        user_favourites = FavouriteProduct.objects.filter(customer=customer, favourite=True)
-        context = {'user_favourites': user_favourites, 'cart_items': cart_items}
-        return render(request, 'favourites.html', context)
-    # else:
-    #     items = []
-    #     order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-    #     cart_items = order['get_cart_items']
-
-
-
 

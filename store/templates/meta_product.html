@@ -4,13 +4,13 @@
 
 <div>
     <p>SIMPLE NAV JUST FOR NOW</p>
-    <p><a href="{% url 'orders_history' %}">Orders History</a></p>
-    <p><a href="{% url 'favourites' %}">Favourites</a></p>
+    <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
     <p>Products in Cart: {{ cart_items }}</p>
 
     <div>
         {% for category in categories %}
-            <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
         {% endfor %}
     </div>
 </div>
@@ -23,6 +23,11 @@
     <img src="{{ meta_product.imageURL }}">
     <div>
         <strong>{{ meta_product.name }}</strong>
+        {% if favourite.favourite == True %}
+        <p>You have fav this!</p>
+        {% else %}
+        <p>You didn't fav this prod</p>
+        {% endif %}
         <p>category: {{ meta_product.category }}</p>
         <p>description: {{ meta_product.description }}</p>
         {% if meta_product.digital %}

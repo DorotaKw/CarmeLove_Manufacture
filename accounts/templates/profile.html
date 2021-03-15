@@ -9,15 +9,11 @@
         <p><a href="{% url 'accounts:profile' %}">Profile</a></p>
         <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
         <p><a href="{% url 'accounts:orders' %}">Orders</a></p>
-
-
-
-
-
-
-
     </div>
     <div>
+
+
+
         <p>Hello, {{ user }}!</p>
         {% for order in object_list %}
             {{ order.id }}
