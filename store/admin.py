@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django import forms
 from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.http import urlencode
@@ -16,8 +17,21 @@ from .models import *
 # admin.site.register(FavouriteProduct)
 
 
+class CustomerAdminForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = '__all__'
+
+    def clean_first_name(self):
+        if self.cleaned_data['name'] == 'CarmeLove':
+            raise forms.ValidationError('Already exist! ^^')
+
+        return self.cleaned_data['name']
+
+
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    form = CustomerAdminForm
     list_display = ('user', 'name', 'email')
 
 
