@@ -25,6 +25,11 @@ class CustomerAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['name'].label = 'Name (Healthy Sweets only!):'
+        return form
+
 
 @admin.register(MetaProduct)
 class MetaProductAdmin(admin.ModelAdmin):
