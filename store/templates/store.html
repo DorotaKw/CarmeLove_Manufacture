@@ -4,8 +4,7 @@
 
     <div>
         <p>SIMPLE NAV JUST FOR NOW</p>
-        <p><a href="{% url 'orders_history' %}">Orders History</a></p>
-        <p><a href="{% url 'favourites' %}">Favourites</a></p>
+        <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
         <hr>
         <p><a href="{% url 'accounts:sign_up' %}">Sign Up</a></p>
         <p><a href="{% url 'accounts:login' %}">Login</a></p>
@@ -16,7 +15,7 @@
 
         <div>
             {% for category in categories %}
-                <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
+                <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
             {% endfor %}
         </div>
     </div>
@@ -27,7 +26,7 @@
         <div>
             <strong>{{ meta_product.name }}</strong>
             <p>category: {{ meta_product.category }}</p>
-            <a href="{% url 'meta_product' meta_product.id %}">More...</a>
+            <a href="{% url 'store:meta_product' meta_product.id %}">More...</a>
             <hr>
         </div>
         {% endfor %}
