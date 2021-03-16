@@ -39,10 +39,13 @@ class OrderAdmin(admin.ModelAdmin):
                     'date_ordered', 'comment',
                     'show_shipping_address', 'show_if_shipping_is_required',
                     'get_cart_total', 'get_cart_items', 'get_orderitems')
+    
 
     def show_shipping_address(self, obj):
         result = ShippingAddress.objects.get(id=obj.id)
         return result
+
+    show_shipping_address.short_description = 'Shipping Address'
 
     def show_if_shipping_is_required(self, obj):
         result = False
@@ -51,6 +54,8 @@ class OrderAdmin(admin.ModelAdmin):
             if i.product.digital is False:
                 result = True
         return result
+
+    show_if_shipping_is_required.short_description = 'Shipping Required'
 
 
 @admin.register(OrderItem)
