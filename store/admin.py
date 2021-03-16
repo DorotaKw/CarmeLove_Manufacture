@@ -37,8 +37,20 @@ class ProductAdmin(admin.ModelAdmin):
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'complete',
                     'date_ordered', 'comment',
+                    'show_shipping_address', 'show_if_shipping_is_required',
                     'get_cart_total', 'get_cart_items', 'get_orderitems')
-    # problem with shipping - digital
+
+    def show_shipping_address(self, obj):
+        result = ShippingAddress.objects.get(id=obj.id)
+        return result
+
+    def show_if_shipping_is_required(self, obj):
+        result = False
+        orderitems = obj.orderitem_set.all()
+        for i in orderitems:
+            if i.product.digital is False:
+                result = True
+        return result
 
 
 @admin.register(OrderItem)
