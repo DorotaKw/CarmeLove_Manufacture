@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
+from django.utils.http import urlencode
 
 from .models import *
 
@@ -38,8 +41,18 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'complete',
                     'date_ordered', 'comment',
                     'show_shipping_address', 'show_if_shipping_is_required',
-                    'get_cart_total', 'get_cart_items', 'get_orderitems')
-    
+                    'get_cart_total', 'get_cart_items', 'view_products_link', 'get_orderitems')
+
+    def view_products_link(self, obj):
+        count = obj.orderitem_set.count()
+        url = (
+            reverse('admin:store_orderitem_changelist')
+            + "?"
+            + urlencode({'order__id': f'{obj.id}'})
+        )
+        return format_html('<a href="{}">{}</a>', url, count)
+
+    view_products_link.short_description = 'Number of product types'
 
     def show_shipping_address(self, obj):
         result = ShippingAddress.objects.get(id=obj.id)
