@@ -93,6 +93,7 @@ class ProductOpinionAdmin(admin.ModelAdmin):
     list_display = ('product', 'customer', 'rating',
                     'title', 'opinion', 'date_created')
     list_filter = ('product', 'customer', 'rating', 'date_created')
+    search_fields = ('title__startswith', 'opinion__startswith', )
 
 
 @admin.register(FavouriteProduct)
