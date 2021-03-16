@@ -12,6 +12,18 @@ class Customer(Model):
     def __str__(self):
         return self.name
 
+    @property
+    def items(self):
+        items = self.order.orderitems_set.all()
+        return items
+
+    # @property
+    # def see_history_items(self):
+    #     user_orders = self.order_set.all()
+    #     for user_order in user_orders:
+    #         user_items = user_order.get_orderitems
+    #     return user_items
+
 
 class Category(Model):
     class Meta:
@@ -74,10 +86,10 @@ class MetaProduct(Model):
             url = ''
         return url
 
-    @property
-    def favourite(self):
-        pass
-        #favourite =
+    # @property
+    # def see_favourites(self):
+    #     favourites = self.favouriteproduct_set.all()
+    #     return favourites
 
 
 class Product(Model):
@@ -97,6 +109,11 @@ class Product(Model):
     def name(self):
         name = self.meta_product.name
         return name
+
+    @property
+    def digital(self):
+        digital = self.meta_product.digital
+        return digital
 
     @property
     def availability(self):

@@ -7,7 +7,7 @@ from store.models import Customer
 
 class SignUpForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
-        fields = '__all__'
+        fields = ['username', 'email']
 
     name = CharField(widget=TextInput(attrs={'placeholder': 'Your name...'}),
                      max_length=70)
