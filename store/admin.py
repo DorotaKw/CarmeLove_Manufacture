@@ -34,6 +34,11 @@ class CustomerAdmin(admin.ModelAdmin):
     form = CustomerAdminForm
     list_display = ('user', 'name', 'email')
 
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj, **kwargs)
+        form.base_fields['name'].label = 'Cookie Monster name:'
+        return form
+
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
