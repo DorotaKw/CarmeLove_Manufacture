@@ -29,11 +29,13 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(MetaProduct)
 class MetaProductAdmin(admin.ModelAdmin):
     list_display = ('category', 'name', 'availability', 'digital', 'description', 'image')
+    list_filter = ('category', 'availability', 'digital')
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('meta_product', 'measure', 'package', 'price', 'availability')
+    list_filter = ('meta_product', 'measure', 'package', 'price')
 
 
 @admin.register(Order)
@@ -42,6 +44,8 @@ class OrderAdmin(admin.ModelAdmin):
                     'date_ordered', 'comment',
                     'show_shipping_address', 'show_if_shipping_is_required',
                     'get_cart_total', 'get_cart_items', 'view_products_link', 'get_orderitems')
+    list_filter = ('complete', 'date_ordered')
+    # how to filter by 'show_if_shipping_is_required'?
 
     def view_products_link(self, obj):
         count = obj.orderitem_set.count()
@@ -74,21 +78,25 @@ class OrderAdmin(admin.ModelAdmin):
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
     list_display = ('order', 'product', 'quantity', 'get_total', 'date_added')
+    list_filter = ('product', 'date_added')
 
 
 @admin.register(ShippingAddress)
 class ShippingAddressAdmin(admin.ModelAdmin):
     list_display = ('order', 'customer', 'address',
                     'city', 'state', 'zipcode', 'date_added')
+    list_filter = ('customer',)
 
 
 @admin.register(ProductOpinion)
 class ProductOpinionAdmin(admin.ModelAdmin):
     list_display = ('product', 'customer', 'rating',
                     'title', 'opinion', 'date_created')
+    list_filter = ('product', 'customer', 'rating', 'date_created')
 
 
 @admin.register(FavouriteProduct)
 class FavouriteProductAdmin(admin.ModelAdmin):
     list_display = ('meta_product', 'customer', 'favourite')
+    list_filter = ('meta_product', 'customer')
 
