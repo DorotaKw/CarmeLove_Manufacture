@@ -107,24 +107,26 @@
 
         <p>Items: {{ order.get_cart_items }}</p>
         <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
+        <p>ORDER ID {{ order.id }}</p>
     </div>
 
 
 
-<!--    <div>-->
-<!--        <p>{{ order_comment.comment }}</p>-->
-<!--        {% if order.comment %}-->
-<!--            <p>{{ order.comment }}</p>-->
-<!--        {% else %}-->
-<!--            <div>-->
-<!--                <form method="post">-->
-<!--                    {% csrf_token %}-->
-<!--                    <p>Order Comment: {{ form.comment }}</p>-->
-<!--                    <input type="submit" value="Submit" name="Add order comment">-->
-<!--                </form>-->
-<!--            </div>-->
-<!--        {% endif %}-->
-<!--    </div>-->
+    <div>
+        <p>ORDER ID {{ order.id }}</p>
+        <p>{{ order_comment.comment }}</p>
+        {% if order.comment %}
+            <p>{{ order.comment }}</p>
+        {% else %}
+            <div>
+                <form method="post">
+                    {% csrf_token %}
+                    <p>Order Comment: {{ form.comment }}</p>
+                    <input type="submit" value="Submit" name="Add order comment">
+                </form>
+            </div>
+        {% endif %}
+    </div>
 
 {% endblock content %}
 
