@@ -100,11 +100,47 @@ def cart(request):
 
 
 def checkout(request):
-    data = cart_data(request)
 
-    cart_items = data['cart_items']
-    order = data['order']
-    items = data['items']
+    # Make orders for unauthorized users!
+
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cart_items = order.get_cart_items
+
+        form = OrderCommentForm()
+        try:
+            comment = OrderComment.objects.get(order=order)
+            if comment:
+                if request.method == 'POST':
+                    comment.delete()
+                    form = OrderCommentForm(request.POST)
+                    if form.is_valid():
+                        order_comment = form.save(commit=False)
+                        # without this line, there are created new empty orders with comment
+                        # but without it, comment is still on the page
+                        order_comment.order = order
+                        # maybe save comment while make a transfer?
+                        order_comment.save()
+                        context = {}
+                        context['order_comment'] = order_comment
+        except OrderComment.DoesNotExist:
+            if request.method == 'POST':
+                form = OrderCommentForm(request.POST)
+                if form.is_valid():
+                    order_comment = form.save(commit=False)
+                    order_comment.order = order
+                    order_comment.save()
+                    context = {}
+                    context['order_comment'] = order_comment
+
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+        cart_items = order['get_cart_items']
+        form = None
+
     categories = Category.objects.all()
 
     """ Exception Type:	TypeError
@@ -133,31 +169,33 @@ def checkout(request):
 
     # Exception Value:
     # UNIQUE constraint failed: store_ordercomment.order_id
-    form = OrderCommentForm()
-    try:
-        comment = OrderComment.objects.get(order=order)
-        if comment:
-            if request.method == 'POST':
-                comment.delete()
-                form = OrderCommentForm(request.POST)
-                if form.is_valid():
-                    order_comment = form.save(commit=False)
-                    # without this line, there are created new empty orders with comment
-                    # but without it, comment is still on the page
-                    order_comment.order = order
-                    # maybe save comment while make a transfer?
-                    order_comment.save()
-                    context = {}
-                    context['order_comment'] = order_comment
-    except comment.DoesNotExist:
-        if request.method == 'POST':
-            form = OrderCommentForm(request.POST)
-            if form.is_valid():
-                order_comment = form.save(commit=False)
-                order_comment.order = order
-                order_comment.save()
-                context = {}
-                context['order_comment'] = order_comment
+    # DOBRE!!!
+    # form = OrderCommentForm()
+    # try:
+    #     comment = OrderComment.objects.get(order=order)
+    #     if comment:
+    #         if request.method == 'POST':
+    #             comment.delete()
+    #             form = OrderCommentForm(request.POST)
+    #             if form.is_valid():
+    #                 order_comment = form.save(commit=False)
+    #                 # without this line, there are created new empty orders with comment
+    #                 # but without it, comment is still on the page
+    #                 order_comment.order = order
+    #                 # maybe save comment while make a transfer?
+    #                 order_comment.save()
+    #                 context = {}
+    #                 context['order_comment'] = order_comment
+    # except OrderComment.DoesNotExist:
+    #     if request.method == 'POST':
+    #         form = OrderCommentForm(request.POST)
+    #         if form.is_valid():
+    #             order_comment = form.save(commit=False)
+    #             order_comment.order = order
+    #             order_comment.save()
+    #             context = {}
+    #             context['order_comment'] = order_comment
+
             # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     """
     form = OrderCommentForm()
