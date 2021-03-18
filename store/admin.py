@@ -65,7 +65,7 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'complete',
-                    'date_ordered', 'comment',
+                    'date_ordered',
                     'show_shipping_address', 'show_if_shipping_is_required',
                     'get_cart_total', 'get_cart_items', 'view_products_link', 'get_orderitems')
     list_filter = ('complete', 'date_ordered')
@@ -97,6 +97,11 @@ class OrderAdmin(admin.ModelAdmin):
         return result
 
     show_if_shipping_is_required.short_description = 'Shipping Required'
+
+
+@admin.register(OrderComment)
+class OrderCommentAdmin(admin.ModelAdmin):
+    list_display = ('order', 'comment')
 
 
 @admin.register(OrderItem)
