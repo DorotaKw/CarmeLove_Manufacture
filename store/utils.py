@@ -51,10 +51,12 @@ def cart_data(request):
         cart_items = order.get_cart_items
     else:
         cookie_data = cookie_cart(request)
+        customer = None
         cart_items = cookie_data['cart_items']
         order = cookie_data['order']
         items = cookie_data['items']
-    return {'cart_items': cart_items, 'order': order, 'items': items}
+    return {'customer': customer, 'cart_items': cart_items,
+            'order': order, 'items': items}
 
 
 def quest_order(request, data):
