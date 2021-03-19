@@ -18,6 +18,7 @@
 
 <div>
     {{ customer }}
+    <p>{{ customer.all_loyalty_points }}</p>
     <hr>
     {% if user_orders %}
         <div>
@@ -28,7 +29,7 @@
             <p>Time: {{ user_order.date_ordered.time }}</p>
             <p>Total: {{ user_order.get_cart_total }}</p>
             <p>Items: {{ user_order.get_cart_items }}</p>
-            <p>Loyalty points: {{ user_order.loyalty_points|floatformat:"0" }}</p>
+            <p>Loyalty points: {{ user_order.loyalty_points }}</p>
             <a href="{% url 'accounts:order_history' user_order.id %}">Order Details</a>
             <hr>
             {% endfor %}
