@@ -1,0 +1,10 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<strong>FOR STAFF ONLY</strong>
+<p><a href="{% url 'accounts:orders' %}">All Orders</a></p>
+<p><a href="{% url 'accounts:orders_completed' %}">Orders Completed</a></p>
+
+
+{% endblock content %}

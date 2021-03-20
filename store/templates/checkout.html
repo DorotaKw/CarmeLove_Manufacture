@@ -114,7 +114,7 @@
     </div>
 
 
-
+{% if user.is_authenticated %}
     <div>
         <p>ORDER ID {{ order.id }}</p>
         <p>{{ order_comment.comment }}</p>
@@ -130,6 +130,7 @@
             </div>
         {% endif %}
     </div>
+{% endif %}
 
 {% endblock content %}
 

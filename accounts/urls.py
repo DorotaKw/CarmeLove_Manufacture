@@ -20,9 +20,10 @@ urlpatterns = [
     path('favourites/', favourites, name='favourites'),
 
     # for Admin
-    path('orders/', OrdersView.as_view(), name='orders'),
-    path('orders/<int:order_details_id>/order_details/', order_details, name='order_details'),
-    path('orders/orders_completed/', OrdersCompletedView.as_view(), name='orders_completed'),
-    path('orders/orders_completed/<int:completed_order_details_id>/completed_order_details/',
+    path('profile/staff/', StaffView.as_view(), name='staff'),
+    path('profile/staff/orders/', OrdersView.as_view(), name='orders'),
+    path('profile/staff/orders/<int:order_details_id>/order_details/', order_details, name='order_details'),
+    path('profile/staff/orders/orders_completed/', OrdersCompletedView.as_view(), name='orders_completed'),
+    path('profile/staff/orders/orders_completed/<int:completed_order_details_id>/completed_order_details/',
          completed_order_details, name='completed_order_details'),
 ]
