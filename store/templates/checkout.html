@@ -108,6 +108,9 @@
         <p>Items: {{ order.get_cart_items }}</p>
         <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
         <p>ORDER ID {{ order.id }}</p>
+        {% if user.is_authenticated %}
+            <p>Liczba Twoich punktów lojalnościowych: {{ customer.all_loyalty_points }}</p>
+        {% endif %}
     </div>
 
 

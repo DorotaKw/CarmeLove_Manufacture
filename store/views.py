@@ -100,11 +100,13 @@ def cart(request):
 
 
 def checkout(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+    data = cart_data(request)
+    customer = data['customer']
+
+    cart_items = data['cart_items']
+    order = data['order']
+    items = data['items']
+    categories = Category.objects.all()
 
         form = OrderCommentForm()
         try:
@@ -143,7 +145,8 @@ def checkout(request):
     context = {'categories': categories,
                'items': items, 'order': order,
                'cart_items': cart_items,
-               'form': form}
+               'form': form, 'customer': customer}
+               # 'order_comment': order_comment}
     return render(request, 'checkout.html', context)
 
 

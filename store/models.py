@@ -1,7 +1,10 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
 from django.db.models import BooleanField, CASCADE, CharField, DateTimeField, DecimalField, \
     F, FloatField, ForeignKey, ImageField, \
     IntegerField, Model, OneToOneField, SET_NULL, TextField, ManyToOneRel
+from django.utils import timezone
 
 
 class Customer(Model):
@@ -16,6 +19,12 @@ class Customer(Model):
     def items(self):
         items = self.order.orderitems_set.all()
         return items
+
+    @property
+    def all_loyalty_points(self):
+        orders = self.order_set.all()
+        total_loyalty_points = sum([order.loyalty_points for order in orders])
+        return total_loyalty_points
 
     # @property
     # def see_history_items(self):
@@ -172,6 +181,19 @@ class Order(Model):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
+
+    @property
+    def loyalty_points(self):
+        if self.complete:
+            date_ordered = self.date_ordered
+            current_date = timezone.now()
+            date_after_order = date_ordered + timedelta(days=28)
+            date_expiration = date_after_order + timedelta(days=365)
+            if date_after_order >= current_date <= date_expiration:
+                points = round(self.get_cart_total / 10)
+        else:
+            points = 0
+        return points
 
 
 class OrderItem(Model):
