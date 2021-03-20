@@ -88,6 +88,13 @@ def favourites(request):
     #     cart_items = order['get_cart_items']
 
 
+# view for Staff
+class StaffView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
+    template_name = 'staff.html'
+    model = Order
+    permission_required = 'accounts/.orders'
+
+
 # view for Admin
 class OrdersView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
     template_name = 'orders.html'
