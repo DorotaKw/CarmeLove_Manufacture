@@ -187,9 +187,9 @@ class Order(Model):
         if self.complete:
             date_ordered = self.date_ordered
             current_date = timezone.now()
-            date_after_order = date_ordered + timedelta(days=28)
+            date_after_order = date_ordered + timedelta(days=1)
             date_expiration = date_after_order + timedelta(days=365)
-            if date_after_order >= current_date <= date_expiration:
+            if date_after_order <= current_date <= date_expiration:
                 points = round(self.get_cart_total / 10)
         else:
             points = 0
