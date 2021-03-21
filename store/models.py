@@ -218,14 +218,10 @@ class OrderItem(Model):
         name = self.product.name
         return name
 
-    # @property
-    # def imageURL(self):
-    #     image = self.product.image
-    #     if image:
-    #         url = self.product.image.url
-    #     else:
-    #         url = ''
-    #     return url
+    @property
+    def meta_product(self):
+        meta_product = self.product.name
+        return meta_product
 
     @property
     def get_history_items(self):

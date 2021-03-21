@@ -15,15 +15,43 @@
     </div>
 </div>
 
+<div>
+    <p>Customer: {{ customer }}</p>
+</div>
+
+
+<div>
+<!--    <strong>Way remove DUPLICATES</strong>-->
+    <strong>All products you have bought</strong>
+    <hr>
+    {% if user_orders %}
+        <div>
+            {% for user_order in user_orders %}
+                {% for item in user_order.get_orderitems %}
+                    {% ifchanged item.product.name %}
+                    <img src="{{ item.product.imageURL }}">
+                    <a href="{% url 'store:meta_product' item.product.meta_product.id %}"><p>{{ item.product.name }}</p></a>
+                    <hr>
+                    {% endifchanged %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no completed orders.</p>
+    {% endif %}
+</div>
+
+
 <!--<div>-->
-<!--    <p>Customer: {{ customer }}</p>-->
+<!--    <strong>Way with DUPLICATES</strong>-->
 <!--    <hr>-->
 <!--    {% if user_orders %}-->
 <!--        <div>-->
 <!--            {% for user_order in user_orders %}-->
 <!--                {% for item in user_order.get_orderitems %}-->
 <!--                    <img src="{{ item.product.imageURL }}">-->
-<!--                    <p>{{ item.product.name }}</p>-->
+<!--                    <a href="{% url 'store:meta_product' item.product.meta_product.id %}"><p>{{ item.product.name }}</p></a>-->
+<!--                    <hr>-->
 <!--                {% endfor %}-->
 <!--            {% endfor %}-->
 <!--        </div>-->
@@ -32,19 +60,18 @@
 <!--    {% endif %}-->
 <!--</div>-->
 
-<div>
-    <p>Customer: {{ customer }}</p>
-    {% if user_orders %}
-    <div>
-        {% for bought_product in customer.bought_products %}
-            <p>{{ bought_product }}</p>
-        {% endfor %}
-    </div>
-    {% else %}
-        <p>You have no completed orders.</p>
-    {% endif %}
-</div>
-
+<!--<div>-->
+<!--    <strong>Way without DUPLICATES & Links</strong>-->
+<!--    {% if user_orders %}-->
+<!--    <div>-->
+<!--        {% for bought_product in customer.bought_products %}-->
+<!--            <p>{{ bought_product }}</p>-->
+<!--        {% endfor %}-->
+<!--    </div>-->
+<!--    {% else %}-->
+<!--        <p>You have no completed orders.</p>-->
+<!--    {% endif %}-->
+<!--</div>-->
 
 
 {% endblock content %}
