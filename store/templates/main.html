@@ -4,33 +4,185 @@
 <head>
     <meta charset="UTF-8">
     <title>CarmeLove</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CarmeLove - Manufacture</title>
+  <meta name="author" content="Dorota Kwaskiewicz, Dorota Chroboczek, Ilona Mazur">
+  <meta name="description" content="Buy handmade sweets, candies &amp; lollipops. CarmeLove - Manufacture">
+  <meta name="keywords" content="sweets, candies, lollipops, party organization">
+  <meta name="title" content="CarmeLove - Manufacture">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="icon" href="{% static 'images/carmelove_logo2.svg' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/fontello.css' %}" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="{% static 'js/jquery.scrollTo.min.js' %}"></script>
+  <script>
+    jQuery(function ($) {
+      $.scrollTo(0);
+      $(".scroll-up").click(function () { $.scrollTo($("body"), 100); });
+    });
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 300) $(".scroll-up").fadeIn();
+      else $(".scroll-up").fadeOut();
+    });
+  </script>
+  <script>
+    jQuery(function ($) {
+      $.scrollTo(0);
+      $("#link1").click(function () { $.scrollTo($("#our-mission"), 1000) });
+    });
+  </script>
+  <script>
+    jQuery(function ($) {
+      $.scrollTo(0);
+      $("#link6").click(function () { $.scrollTo($("#footer-container"), 1000) });
+    });
+  </script>
 </head>
+
 <body>
-
-    <div>
-        <a href="{% url 'accounts:sign_up' %}">Sign Up</a>
-        <a href="{% url 'accounts:login' %}">Login</a>
-        <a href="{% url 'accounts:logout' %}">Logout</a>
-        <a href="{% url 'accounts:password_change' %}">Password Change</a>
-        <a href="{% url 'orders_history' %}">Orders History</a>
-
+<!-- nawigacja 2 -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white">
+    <div class="nicdark_site nicdark_front_page">
+      <!--start header-->
+      <div class="nicdark_menu_type_3 ">
+        <!--start container-->
+        <div class="nicdark_container">
+          <div class="grid_12 percentage nicdark_menu_center">
+            <div class="nicdark_space70">
+            </div>
+            <!--logo responsive-->
+            <img class="header_type_3_logo_responsive" src="{% static 'images/carmelove_logo.png' %}">
+            <!--logo responsive-->
+            <!--navbar-left-->
+            <div class="grid_5 nicdark_right">
+              <div class="menu-lewe-menu-container">
+                <ul class="menu">
+                  <li>
+                    <a id="link3" href="#">Warsztaty</a>
+                  </li>
+                  <li>
+                    <a id="link2" href="#">Realizacje</a>
+                  </li>
+                  <li>
+                    <a id="link1" href="#">O Nas</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <!--navbar-left-->
+            <!--navbar-center-->
+            <div class="nicdark_relative grid_2">
+              <a href="{% url 'store:home' %}"><img class="zoom_2"
+                  style="width:100%; margin-top: -70px; height: auto;position: absolute; left: 0px;"
+                  src="{% static 'images/carmelove_logo.png' %}"></a>
+            </div>
+            <!--navbar-center-->
+            <!--navbar-right-->
+            <div class="grid_5 nicdark_left">
+              <div class="menu-prawe-menu-container">
+                <ul class="menu">
+                  <li>
+                    <a id="link4" href="#">Sklep</a>
+                    <ul class="sub-menu">
+                      <li>
+                        <a href="{% url 'store:store' %}">Sklep</a>
+                      </li>
+                      <li>
+                        <a href="{% url 'store:cart' %}">Koszyk</a>
+                      </li>
+                      <li>
+                        <a href="{% url 'accounts:hello' %}">Moje konto</a>
+                      </li>
+                      <li>
+                        <a href="{% url 'store:checkout' %}">Podsumowanie Zakupów</a>
+                      </li>
+                      <li>
+                        <a href="#">Regulamin Sklepu Internetowego</a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <a id="link5" href="#">Promocje</a>
+                  </li>
+                  <li>
+                    <a id="link6" href="#">Kontakt</a>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <ul style="margin:0px;" class="menu">
+                  <li style="padding:15px; margin:0px;">
+                      <a style="margin:0px;" class="zoom"
+                      href="{% url 'store:cart' %}"><img style="width: 30px; margin-top:  0px;" src="{% static 'images/cart.png' %}"></a></li>
+                </ul>
+              </div>
+            </div>
+            <!--navbar-right-->
+          </div>
+        </div>
+      </div>
     </div>
+    </div>
+    </div>
+    </div>
+  </nav>
+  <!-- nawigacja-->
+   
+  {% block content %}
+  {% endblock content %}
 
-    <div>
-        <strong><a href="{% url 'home' %}">HOME</a></strong>
-        <strong><a href="{% url 'store' %}">Store</a></strong>
-        <strong><a href="{% url 'cart' %}">Cart</a></strong>
-        <strong><a href="{% url 'checkout' %}">Checkout</a></strong>
+  <!-- footer -->
+  <footer>
+    <div id="footer-container">
+      <div class="footer-text">Kontakt z Nami</div>
+      <div id="contact-form">
+        <form action="mailto:biuro@carmelove.com" method="post">
+          <input type="text" name="name" placeholder="Name" required>
+          <input type="email" name="email" placeholder="Email" required>
+          <br>
+          <input type="subject" name="subject" placeholder="Subject" required>
+          <br>
+          <textarea name="message" cols="35" rows="5" placeholder="Message"></textarea>
+          <br>
+          <input type="submit" value="Send">
+        </form>
+      </div>
+      <div class="footer-text">Znajdź Nas</div>
+      <div class="social-icons">
+        <div id="fb">
+          <i class="icon-facebook"></i>
+        </div>
+        <div id="yt">
+          <i class="icon-youtube"></i>
+        </div>
+        <div id="in">
+          <i class="icon-linkedin"></i>
+        </div>
+        <div id="tw">
+          <i class="icon-twitter"></i>
+        </div>
+        <div id="is">
+          <i class="icon-instagram"></i>
+        </div>
+      </div>
     </div>
-    <div>
-        {% for category in categories %}
-            <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
-        {% endfor %}
-    </div>
-    <p>Products in Cart: {{ cart_items }}</p>
-    {% block content %}
-    {% endblock content %}
-<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+    <div class="copyright">2021 &copy CarmeLove - Manufacture | Manufaktura słodyczy! <a
+        href="mailto:biuro@carmelove.com" class="copyrightlink"><i class="icon-mail-alt"></i>
+        biuro@carmelove.com</a></div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+    crossorigin="anonymous"></script>
+  <a href="#" class="scroll-up"><img src="{% static 'images/scrollup.png' %}" alt="ScrollUp"></a>
+
+{#<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>#}
 </body>
 </html>

@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div>
+    <p><a href="{% url 'accounts:profile' %}">Profile</a></p>
+    <h1>All Orders</h1>
+    <a href="{% url 'accounts:orders_completed' %}">Orders Completed</a>
+    <ul>
+        {% for order in object_list %}
+            <ul>
+                <p>#{{ forloop.counter }} - Order id: {{ order.id }}</p>
+                <p>Customer: {{ order.customer }} - Complete: {{ order.complete }}</p>
+                <p>Date: {{ order.date_ordered.date }} - Time: {{ order.date_ordered.time }}</p>
+                <p>Total: {{ order.get_cart_total }} - Items: {{ order.get_cart_items }}</p>
+                <a href="{% url 'accounts:order_details' order.id %}">Order details</a>
+                <hr>
+            </ul>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock content %}

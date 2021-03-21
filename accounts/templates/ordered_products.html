@@ -1,0 +1,77 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div>
+    <p>SIMPLE NAV JUST FOR NOW</p>
+    <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
+    <p>Products in Cart: {{ cart_items }}</p>
+
+    <div>
+        {% for category in categories %}
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
+        {% endfor %}
+    </div>
+</div>
+
+<div>
+    <p>Customer: {{ customer }}</p>
+</div>
+
+
+<div>
+<!--    <strong>Way remove DUPLICATES</strong>-->
+    <strong>All products you have bought</strong>
+    <hr>
+    {% if user_orders %}
+        <div>
+            {% for user_order in user_orders %}
+                {% for item in user_order.get_orderitems %}
+                    {% ifchanged item.product.name %}
+                    <img src="{{ item.product.imageURL }}">
+                    <a href="{% url 'store:meta_product' item.product.meta_product.id %}"><p>{{ item.product.name }}</p></a>
+                    <hr>
+                    {% endifchanged %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>You have no completed orders.</p>
+    {% endif %}
+</div>
+
+
+<!--<div>-->
+<!--    <strong>Way with DUPLICATES</strong>-->
+<!--    <hr>-->
+<!--    {% if user_orders %}-->
+<!--        <div>-->
+<!--            {% for user_order in user_orders %}-->
+<!--                {% for item in user_order.get_orderitems %}-->
+<!--                    <img src="{{ item.product.imageURL }}">-->
+<!--                    <a href="{% url 'store:meta_product' item.product.meta_product.id %}"><p>{{ item.product.name }}</p></a>-->
+<!--                    <hr>-->
+<!--                {% endfor %}-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+<!--    {% else %}-->
+<!--        <p>You have no completed orders.</p>-->
+<!--    {% endif %}-->
+<!--</div>-->
+
+<!--<div>-->
+<!--    <strong>Way without DUPLICATES & Links</strong>-->
+<!--    {% if user_orders %}-->
+<!--    <div>-->
+<!--        {% for bought_product in customer.bought_products %}-->
+<!--            <p>{{ bought_product }}</p>-->
+<!--        {% endfor %}-->
+<!--    </div>-->
+<!--    {% else %}-->
+<!--        <p>You have no completed orders.</p>-->
+<!--    {% endif %}-->
+<!--</div>-->
+
+
+{% endblock content %}

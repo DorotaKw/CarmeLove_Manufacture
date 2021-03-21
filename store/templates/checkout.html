@@ -2,6 +2,19 @@
 {% load static %}
 {% block content %}
 
+<div>
+    <p>SIMPLE NAV JUST FOR NOW</p>
+    <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
+    <p>Products in Cart: {{ cart_items }}</p>
+
+    <div>
+        {% for category in categories %}
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
+        {% endfor %}
+    </div>
+</div>
+
 <h1>Checkout</h1>
 
     <div>
@@ -12,6 +25,67 @@
         </form>
         <div>Shipping Information</div>
             <!--        javascript for shipping -->
+    <form class="row g-3 needs-validation" novalidate>
+  <div class="col-md-4">
+    <label for="validationCustom01" class="form-label">First name</label>
+    <input type="text" class="form-control" id="validationCustom01" value={{ customer.firstname }} required>
+    <div class="valid-feedback">
+      Looks good!
+    </div>
+  </div>
+  <div class="col-md-4">
+    <label for="validationCustom02" class="form-label">Last name</label>
+    <input type="text" class="form-control" id="validationCustom02" value={{ customer.lastname }} required>
+    <div class="valid-feedback">
+      Looks good!
+    </div>
+  </div>
+  <div class="form-group">
+  <label class="col-md-5 control-label">E-Mail</label>
+    <div class="col-md-5 inputGroupContainer">
+    <div class="input-group">
+        <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+  <input name="email"  class="form-control"  type="text">
+    </div>
+  </div>
+</div>
+  <div class="col-md-6">
+    <label for="validationCustom03" class="form-label">City</label>
+    <input type="text" class="form-control" id="validationCustom03" required>
+    <div class="invalid-feedback">
+      Please provide a valid city.
+    </div>
+  </div>
+  <div class="col-md-6">
+    <label for="validationCustom03" class="form-label">Address</label>
+    <input type="text" class="form-control" id="validationCustom03" required>
+    <div class="invalid-feedback">
+      Please provide a valid city.
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <label for="validationCustom05" class="form-label">Zip</label>
+    <input type="text" class="form-control" id="validationCustom05" inputmode="numeric" pattern="cc-ccc" required>
+    <div class="invalid-feedback">
+      Please provide a valid zip.
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+      <label class="form-check-label" for="invalidCheck">
+        Agree to terms and conditions
+      </label>
+      <div class="invalid-feedback">
+        You must agree before submitting.
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <button class="btn btn-primary" type="submit">Submit form</button>
+  </div>
+</form>
     </div>
 
     <div>Paypal Options</div>
@@ -33,13 +107,19 @@
 
         <p>Items: {{ order.get_cart_items }}</p>
         <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
+        <p>ORDER ID {{ order.id }}</p>
+        {% if user.is_authenticated %}
+            <p>Liczba Twoich punktów lojalnościowych: {{ customer.all_loyalty_points }}</p>
+        {% endif %}
     </div>
 
 
-
+{% if user.is_authenticated %}
     <div>
-        {% if new_order_comment %}
-            <p>{{ new_order_comment.comment }}</p>
+        <p>ORDER ID {{ order.id }}</p>
+        <p>{{ order_comment.comment }}</p>
+        {% if order.comment %}
+            <p>{{ order.comment }}</p>
         {% else %}
             <div>
                 <form method="post">
@@ -50,6 +130,7 @@
             </div>
         {% endif %}
     </div>
+{% endif %}
 
 {% endblock content %}
 

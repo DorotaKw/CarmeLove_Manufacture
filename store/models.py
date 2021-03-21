@@ -1,7 +1,10 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
 from django.db.models import BooleanField, CASCADE, CharField, DateTimeField, DecimalField, \
     F, FloatField, ForeignKey, ImageField, \
     IntegerField, Model, OneToOneField, SET_NULL, TextField, ManyToOneRel
+from django.utils import timezone
 
 
 class Customer(Model):
@@ -12,6 +15,32 @@ class Customer(Model):
     def __str__(self):
         return self.name
 
+    @property
+    def items(self):
+        items = self.order.orderitems_set.all()
+        return items
+
+    @property
+    def all_loyalty_points(self):
+        orders = self.order_set.all()
+        total_loyalty_points = sum([order.loyalty_points for order in orders])
+        return total_loyalty_points
+
+    @property
+    def bought_products(self):
+        all_orders = self.order_set.all()
+        orders = all_orders.filter(complete=True)
+        user_products = []
+        for order in orders:
+            items = order.get_orderitems
+            for item in items:
+                if item.name in user_products:
+                    pass
+                else:
+                    user_products.append(item.name)
+        history_products = set(user_products)
+        return history_products
+
 
 class Category(Model):
     class Meta:
@@ -19,9 +48,18 @@ class Category(Model):
         verbose_name_plural = 'Categories'
 
     name = CharField(max_length=30)
+    image = ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    @property
+    def imageURL(self):
+        if self.image:
+            url = self.image.url
+        else:
+            url = ''
+        return url
 
 
 MEASURE_TYPE = (
@@ -65,6 +103,11 @@ class MetaProduct(Model):
             url = ''
         return url
 
+    # @property
+    # def see_favourites(self):
+    #     favourites = self.favouriteproduct_set.all()
+    #     return favourites
+
 
 class Product(Model):
     class Meta:
@@ -83,6 +126,11 @@ class Product(Model):
     def name(self):
         name = self.meta_product.name
         return name
+
+    @property
+    def digital(self):
+        digital = self.meta_product.digital
+        return digital
 
     @property
     def availability(self):
@@ -142,6 +190,19 @@ class Order(Model):
         total = sum([item.quantity for item in orderitems])
         return total
 
+    @property
+    def loyalty_points(self):
+        if self.complete:
+            date_ordered = self.date_ordered
+            current_date = timezone.now()
+            date_after_order = date_ordered + timedelta(days=1)
+            date_expiration = date_after_order + timedelta(days=365)
+            if date_after_order <= current_date <= date_expiration:
+                points = round(self.get_cart_total / 10)
+        else:
+            points = 0
+        return points
+
 
 class OrderItem(Model):
     product = ForeignKey(Product, on_delete=SET_NULL, null=True, blank=True)
@@ -151,6 +212,16 @@ class OrderItem(Model):
 
     def __str__(self):
         return self.product.name
+
+    @property
+    def name(self):
+        name = self.product.name
+        return name
+
+    @property
+    def meta_product(self):
+        meta_product = self.product.name
+        return meta_product
 
     @property
     def get_history_items(self):
@@ -183,10 +254,10 @@ class OrderComment(Model):
         verbose_name_plural = 'Orders Comments'
 
     order = OneToOneField(Order, on_delete=CASCADE, null=True, blank=True)
-    comment = CharField(max_length=400, null=True, blank=True)
+    comment = CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return self.comment
 
 
 class ProductOpinion(Model):
@@ -200,3 +271,20 @@ class ProductOpinion(Model):
     def __str__(self):
         return self.title
 
+
+class FavouriteProduct(Model):
+    class Meta:
+        verbose_name = 'Favourite Product'
+        verbose_name_plural = 'Favourite Products'
+
+    meta_product = ForeignKey(MetaProduct, on_delete=CASCADE)
+    customer = ForeignKey(Customer, on_delete=CASCADE, null=True, blank=True)
+    favourite = BooleanField(default=False, null=True, blank=True)
+
+    def __str__(self):
+        return self.meta_product.name
+
+    @property
+    def name(self):
+        name = self.meta_product.name
+        return name
