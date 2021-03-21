@@ -11,7 +11,7 @@ import json
 
 from .models import Customer, Category, Product, Order, OrderItem,\
     ProductOpinion, MetaProduct
-from .forms import ProductOpinionForm, OrderForm
+from .forms import ProductOpinionForm, OrderCommentForm
 
 from .utils import *
 
@@ -101,32 +101,46 @@ def cart(request):
 
 def checkout(request):
     data = cart_data(request)
+    customer = data['customer']
 
     cart_items = data['cart_items']
     order = data['order']
     items = data['items']
-    categories = Category.objects.all()
-        
-    # form = OrderForm()
-    # if request.method == 'POST':
-    #     form = OrderForm(request.POST)
-    #     if form.is_valid():
-    #         new_order_comment = form.save(commit=False)
-    #         new_order_comment.order = order
-    #         new_order_comment.save()
-    #         context = {}
-    #         context['new_order_comment'] = new_order_comment
-    #         # return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-    #
-    # """Problem with unauthorized customer"""
-    # order = Order.objects.get(id=order.id)
-    # order_comment = order.comment
 
+    form = OrderCommentForm()
+    try:
+        # when user is not logged in:
+        # Exception Value:
+        # Field 'id' expected a number but got {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}.
+        comment = OrderComment.objects.get(order=order)
+        if comment:
+            if request.method == 'POST':
+                comment.delete()
+                form = OrderCommentForm(request.POST)
+                if form.is_valid():
+                    order_comment = form.save(commit=False)
+                    # without this line, there are created new empty orders with comment
+                    # but without it, comment is still on the page
+                    order_comment.order = order
+                    # maybe save comment while make a transfer?
+                    order_comment.save()
+                    context = {}
+                    context['order_comment'] = order_comment
+    except OrderComment.DoesNotExist:
+        if request.method == 'POST':
+            form = OrderCommentForm(request.POST)
+            if form.is_valid():
+                order_comment = form.save(commit=False)
+                order_comment.order = order
+                order_comment.save()
+                context = {}
+                context['order_comment'] = order_comment
+
+    categories = Category.objects.all()
     context = {'categories': categories,
                'items': items, 'order': order,
-               'cart_items': cart_items}
-               # 'form': form,
-               # 'order_comment': order_comment}
+               'cart_items': cart_items,
+               'form': form, 'customer': customer}
     return render(request, 'checkout.html', context)
 
 

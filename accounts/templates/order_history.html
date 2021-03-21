@@ -35,6 +35,7 @@
                 <div>Total price for product: {{ history_item.get_total|floatformat:2 }}</div>
             {% endfor %}
             <p>Total price for order: {{ history_order.get_cart_total|floatformat:2 }}</p>
+            <p>Loyalty points: {{ history_order.loyalty_points }}</p>
             <p>Products in order: {{ history_order.get_cart_items }}</p>
         </div>
     </div>
