@@ -2,6 +2,19 @@
 {% load static %}
 {% block content %}
 
+<div>
+    <p>SIMPLE NAV JUST FOR NOW</p>
+    <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
+    <p>Products in Cart: {{ cart_items }}</p>
+
+    <div>
+        {% for category in categories %}
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
+        {% endfor %}
+    </div>
+</div>
+
     <strong>{{ viewed_category.name }}</strong>
 
     <div>
@@ -12,7 +25,7 @@
                 <strong>{{ meta_product.name }}</strong>
 <!--                What do you think about display category name one more time?-->
 <!--                <p>category: {{ meta_product.category }}</p>-->
-                <a href="{% url 'meta_product' meta_product.id %}">More...</a>
+                <a href="{% url 'store:meta_product' meta_product.id %}">More...</a>
                 <hr>
             </div>
             {% endfor %}

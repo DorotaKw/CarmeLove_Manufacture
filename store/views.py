@@ -1,110 +1,157 @@
 import datetime
 
-from django.shortcuts import render, HttpResponseRedirect, redirect
+
+from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import CreateView
+from django.views.generic import ListView
 
 import json
 
-from .models import Customer, Category, Product, Order, OrderItem, ProductOpinion, MetaProduct, OrderComment
+from .models import Customer, Category, Product, Order, OrderItem,\
+    ProductOpinion, MetaProduct
 from .forms import ProductOpinionForm, OrderCommentForm
 
+from .utils import *
 
-def home(request):
+
+def set_initial_cart_status(request):
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
+    context = {'cart_items': cart_items}
+    return context
+
+
+def home(request):
+    data = cart_data(request)
+
+    cart_items = data['cart_items']
+
     categories = Category.objects.all()
     about = 'Hi! We are small Manufacture of Sweets!'
     context = {'categories': categories, 'cart_items': cart_items, 'about': about}
     return render(request, 'home.html', context)
 
 
-def store(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
-    categories = Category.objects.all()
-    meta_products = MetaProduct.objects.all()
-    # products = Product.objects.all()
-    context = {'categories': categories, 'meta_products': meta_products, 'cart_items': cart_items}   #'products': products,
-    return render(request, 'store.html', context)
+class StoreView(ListView):
+    template_name = 'store.html'
+    context_object_name = 'meta_products'
+    model = MetaProduct
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        context.update({
+            'categories': Category.objects.all(),
+            'cart_items': cart_items,
+        })
+        return context
+
+    def get_queryset(self):
+        return MetaProduct.objects.all().order_by('name')
 
 
-def category(request, category_id):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer,
-                                                     complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
-    categories = Category.objects.all()
-    viewed_category = Category.objects.get(id=category_id)
-    meta_products = MetaProduct.objects.filter(category=category_id).order_by('name').all()
-    context = {'categories': categories, 'viewed_category': viewed_category,
-               'meta_products': meta_products, 'cart_items': cart_items}
-    return render(request, 'category.html', context)
+class CategoriesView(ListView):
+    template_name = 'categories.html'
+    context_object_name = 'categories'
+    model = Category
+
+    def get_queryset(self):
+        return Category.objects.order_by('name')
+
+
+class CategoryView(ListView):
+    template_name = 'category.html'
+    model = Category
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        categories = Category.objects.all()
+        viewed_category = get_object_or_404(Category, id=self.kwargs['category_id'])
+        meta_products = MetaProduct.objects.filter(category=self.kwargs['category_id']).order_by('name').all()
+        context = {'categories': categories,
+                   'viewed_category': viewed_category,
+                   'meta_products': meta_products,
+                   'cart_items': cart_items}
+        return context
 
 
 def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer=customer, complete=False)
-        items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
-    else:
-        items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0}
-        cart_items = order['get_cart_items']
+    data = cart_data(request)
 
-    context = {'items': items, 'order': order, 'cart_items': cart_items}
+    cart_items = data['cart_items']
+    order = data['order']
+    items = data['items']
+    categories = Category.objects.all()
+
+    context = {'categories': categories, 'items': items, 'order': order, 'cart_items': cart_items}
     return render(request, 'cart.html', context)
 
 
 def checkout(request):
+    form = OrderCommentForm()
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
+        try:
+            comment = OrderComment.objects.get(order=order)
+            if comment:
+                if request.method == 'POST':
+                    comment.delete()
+                    form = OrderCommentForm(request.POST)
+                    if form.is_valid():
+                        order_comment = form.save(commit=False)
+                        # without this line, there are created new empty orders with comment
+                        # but without it, comment is still on the page
+                        order_comment.order = order
+                        # maybe save comment while make a transfer?
+                        order_comment.save()
+                        context = {}
+                        context['order_comment'] = order_comment
+                        context['customer'] = customer
+                        context['form'] = form
+        except OrderComment.DoesNotExist:
+            if request.method == 'POST':
+                form = OrderCommentForm(request.POST)
+                if form.is_valid():
+                    order_comment = form.save(commit=False)
+                    order_comment.order = order
+                    order_comment.save()
+                    context = {}
+                    context['order_comment'] = order_comment
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
-        
-    form = OrderCommentForm()
-    if request.method == 'POST':
-        form = OrderCommentForm(request.POST)
-        if form.is_valid():
-            new_order_comment = form.save(commit=False)
-            new_order_comment.order = order
-            new_order_comment.save()
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
 
-    current_order = Order.objects.get(id=order.id)
-    order_comment = OrderComment.objects.filter(order=current_order)
+    # past code below:
+    # earlier when user is not logged in:
+    # Exception Value:
+    # Field 'id' expected a number but got {'cart_total': 0, 'cart_items': 0, 'shipping': False}.
 
-    context = {'items': items, 'order': order,
-               'cart_items': cart_items,
-               'form': form, 'order_comment': order_comment}
+    # data = cart_data(request)
+    # customer = data['customer']
+    # cart_items = data['cart_items']
+    # order = data['order']
+    # items = data['items']
+
+    categories = Category.objects.all()
+    context = {'categories': categories,
+               'items': items, 'order': order,
+               'cart_items': cart_items, 'form': form}
     return render(request, 'checkout.html', context)
 
 
@@ -136,11 +183,31 @@ def update_item(request):
 
 def process_order(request):
     transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
     else:
-        print('User is not logged in...')
+        customer, order = quest_order(request, data)
+
+    total = float(data['form']['total'])
+    order.transaction_id = transaction_id
+
+    if total == order.cart_total:
+        order.complete = True
+    order.save()
+
+    if order.shipping is True:
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            address=data['shipping']['address'],
+            city=data['shipping']['city'],
+            state=data['shipping']['state'],
+            zipcode=data['shipping']['zipcode'],
+        )
+
     return JsonResponse('Payment submitted...', safe=False)
 
 
@@ -150,7 +217,7 @@ def meta_product(request, meta_product_id):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
         form = ProductOpinionForm()
         viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
         products = viewed_meta_product.product_set.all()
@@ -173,8 +240,8 @@ def meta_product(request, meta_product_id):
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
         # for now it's the only idea I have, it's working, but view is too fat.
         # maybe JS or/and CSS will help?
         form = None
@@ -190,59 +257,4 @@ def meta_product(request, meta_product_id):
                'opinions': opinions,
                'cart_items': cart_items}
     return render(request, 'meta_product.html', context)
-
-
-# def product(request, product_id):
-#     if request.user.is_authenticated:
-#         customer = request.user.customer
-#         order, created = Order.objects.get_or_create(customer=customer, complete=False)
-#         items = order.orderitem_set.all()
-#         cart_items = order.get_cart_items
-#         form = ProductOpinionForm()
-#         viewed_product = Product.objects.get(id=product_id)
-#         opinions = ProductOpinion.objects.filter(product=viewed_product)
-#         if request.method == 'POST':
-#             form = ProductOpinionForm(request.POST)
-#             if form.is_valid():
-#                 new_opinion = form.save(commit=False)
-#                 new_opinion.customer = request.user.customer
-#                 new_opinion.product = viewed_product
-#                 new_opinion.save()
-#                 user_new_opinion = new_opinion
-#                 context = {'product': viewed_product,
-#                            'form': form,
-#                            'user_new_opinion': user_new_opinion,
-#                            'opinions': opinions,
-#                            'cart_items': cart_items}
-#                 return render(request, 'product.html', context)
-#     else:
-#         items = []
-#         order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-#         cart_items = order['get_cart_items']
-#         # for now it's the only idea I have, it's working, but view is too fat.
-#         # maybe JS or/and CSS will help?
-#         form = None
-#
-#     viewed_product = Product.objects.get(id=product_id)
-#     opinions = ProductOpinion.objects.filter(product=viewed_product)
-#     context = {'product': viewed_product, 'form': form, 'opinions': opinions, 'cart_items': cart_items}
-#     return render(request, 'product.html', context)
-
-def orders_history(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        user_orders = Order.objects.filter(customer=customer, complete=True)
-        context = {'customer': customer, 'user_orders': user_orders}
-        return render(request, 'orders_history.html', context)
-
-
-def order_history(request, user_order_id):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        history_order = Order.objects.get(customer=customer, id=user_order_id)
-        history_items = history_order.get_orderitems
-
-        context = {'history_order': history_order, 'history_items': history_items}
-        return render(request, 'order_history.html', context)
-
 

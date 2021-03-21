@@ -1,3 +1,5 @@
+import re
+
 from django.forms import *
 
 
@@ -13,6 +15,16 @@ class ProductOpinionForm(ModelForm):
     title = CharField(widget=TextInput(attrs={'placeholder': 'Title of opinion...'}), max_length=250, required=False)
     opinion = CharField(widget=Textarea(attrs={'placeholder': 'Opinion...'}), max_length=1500, required=False)
 
+    def clean_title(self):
+        initial = self.cleaned_data['title']
+        sentences = re.sub(r'\s*\.\s*', '.', initial).split('.')
+        return '. '.join(sentence.capitalize() for sentence in sentences)
+
+    def clean_opinion(self):
+        initial = self.cleaned_data['opinion']
+        sentences = re.sub(r'\s*\.\s*', '.', initial).split('.')
+        return '. '.join(sentence.capitalize() for sentence in sentences)
+
 
 class OrderCommentForm(ModelForm):
     class Meta:
@@ -20,5 +32,10 @@ class OrderCommentForm(ModelForm):
         fields = ('comment',)
 
     comment = CharField(widget=Textarea(attrs={'placeholder': 'Your comment for order...'}),
-                        max_length=400,
+                        max_length=500,
                         required=False)
+
+    def clean_comment(self):
+        initial = self.cleaned_data['comment']
+        sentences = re.sub(r'\s*\.\s*', '.', initial).split('.')
+        return '. '.join(sentence.capitalize() for sentence in sentences)

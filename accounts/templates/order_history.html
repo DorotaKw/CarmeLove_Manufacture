@@ -1,0 +1,45 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div>
+    <p><a href="{% url 'accounts:profile' %}">Profile</a></p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
+    <p>SIMPLE NAV JUST FOR NOW</p>
+    <p>Products in Cart: {{ cart_items }}</p>
+
+    <div>
+        {% for category in categories %}
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
+        {% endfor %}
+    </div>
+</div>
+
+<div>
+    <h3>Order History</h3>
+    <hr>
+    <a href="{% url 'accounts:orders_history' %}">Back to Orders History</a>
+    <div>
+        {{ customer }}
+        <hr>
+        <div>
+            <p>Order no: {{ history_order }}</p>
+            <p>Date: {{ history_order.date_ordered.date }}</p>
+            <p>Time: {{ history_order.date_ordered.time }}</p>
+            <hr>
+            {% for history_item in history_items %}
+                <div><img src="{{ history_item.product.imageURL }}"></div>
+                <div>Name: {{ history_item.product.name }}</div>
+                <div>Price: {{ history_item.product.price|floatformat:2 }}</div>
+                <div>Quantity: x{{ history_item.quantity }}</div>
+                <div>Total price for product: {{ history_item.total|floatformat:2 }}</div>
+            {% endfor %}
+            <p>Total price for order: {{ history_order.cart_total|floatformat:2 }}</p>
+            <p>Loyalty points: {{ history_order.loyalty_points }}</p>
+            <p>Products in order: {{ history_order.cart_items }}</p>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

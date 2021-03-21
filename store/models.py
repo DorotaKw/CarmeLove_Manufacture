@@ -1,7 +1,10 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
 from django.db.models import BooleanField, CASCADE, CharField, DateTimeField, DecimalField, \
     F, FloatField, ForeignKey, ImageField, \
     IntegerField, Model, OneToOneField, SET_NULL, TextField, ManyToOneRel
+from django.utils import timezone
 
 
 class Customer(Model):
@@ -12,6 +15,24 @@ class Customer(Model):
     def __str__(self):
         return self.name
 
+    @property
+    def items(self):
+        items = self.order.orderitems_set.all()
+        return items
+
+    @property
+    def all_loyalty_points(self):
+        orders = self.order_set.all()
+        total_loyalty_points = sum([order.loyalty_points for order in orders])
+        return total_loyalty_points
+
+    # @property
+    # def see_history_items(self):
+    #     user_orders = self.order_set.all()
+    #     for user_order in user_orders:
+    #         user_items = user_order.orderitems
+    #     return user_items
+
 
 class Category(Model):
     class Meta:
@@ -19,9 +40,18 @@ class Category(Model):
         verbose_name_plural = 'Categories'
 
     name = CharField(max_length=30)
+    image = ImageField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+    @property
+    def imageURL(self):
+        if self.image:
+            url = self.image.url
+        else:
+            url = ''
+        return url
 
 
 MEASURE_TYPE = (
@@ -65,6 +95,11 @@ class MetaProduct(Model):
             url = ''
         return url
 
+    # @property
+    # def see_favourites(self):
+    #     favourites = self.favouriteproduct_set.all()
+    #     return favourites
+
 
 class Product(Model):
     class Meta:
@@ -83,6 +118,11 @@ class Product(Model):
     def name(self):
         name = self.meta_product.name
         return name
+
+    @property
+    def digital(self):
+        digital = self.meta_product.digital
+        return digital
 
     @property
     def availability(self):
@@ -112,12 +152,12 @@ class Order(Model):
         return str(self.id)
 
     @property
-    def get_order_no(self):
+    def order_no(self):
         order_no = self.id
         return order_no
 
     @property
-    def get_orderitems(self):
+    def orderitems(self):
         orderitems = self.orderitem_set.all()
         return orderitems
 
@@ -131,16 +171,34 @@ class Order(Model):
         return shipping
 
     @property
-    def get_cart_total(self):
+    def cart_total(self):
         orderitems = self.orderitem_set.all()
-        total = sum([item.get_total for item in orderitems])
+        total = sum([item.total for item in orderitems])
         return total
 
     @property
-    def get_cart_items(self):
+    def cart_items(self):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
+
+    @property
+    def comment(self):
+        comment = self.ordercomment
+        return comment
+
+    @property
+    def loyalty_points(self):
+        if self.complete:
+            date_ordered = self.date_ordered
+            current_date = timezone.now()
+            date_after_order = date_ordered + timedelta(days=1)
+            date_expiration = date_after_order + timedelta(days=365)
+            if date_after_order <= current_date <= date_expiration:
+                points = round(self.cart_total / 10)
+        else:
+            points = 0
+        return points
 
 
 class OrderItem(Model):
@@ -153,13 +211,13 @@ class OrderItem(Model):
         return self.product.name
 
     @property
-    def get_history_items(self):
+    def history_items(self):
         if self.order.complete is True:
             m_history_items = self.order.orderitems_set.all()
         return m_history_items
 
     @property
-    def get_total(self):
+    def total(self):
         total = self.product.price * self.quantity
         return total
 
@@ -183,10 +241,10 @@ class OrderComment(Model):
         verbose_name_plural = 'Orders Comments'
 
     order = OneToOneField(Order, on_delete=CASCADE, null=True, blank=True)
-    comment = CharField(max_length=400, null=True, blank=True)
+    comment = CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
-        return str(self.id)
+        return self.comment
 
 
 class ProductOpinion(Model):
@@ -200,3 +258,20 @@ class ProductOpinion(Model):
     def __str__(self):
         return self.title
 
+
+class FavouriteProduct(Model):
+    class Meta:
+        verbose_name = 'Favourite Product'
+        verbose_name_plural = 'Favourite Products'
+
+    meta_product = ForeignKey(MetaProduct, on_delete=CASCADE)
+    customer = ForeignKey(Customer, on_delete=CASCADE, null=True, blank=True)
+    favourite = BooleanField(default=False, null=True, blank=True)
+
+    def __str__(self):
+        return self.meta_product.name
+
+    @property
+    def name(self):
+        name = self.meta_product.name
+        return name
