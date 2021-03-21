@@ -183,6 +183,11 @@ class Order(Model):
         return total
 
     @property
+    def comment(self):
+        comment = self.ordercomment
+        return comment
+
+    @property
     def loyalty_points(self):
         if self.complete:
             date_ordered = self.date_ordered

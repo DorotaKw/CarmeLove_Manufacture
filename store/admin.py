@@ -68,7 +68,7 @@ class OrderAdmin(admin.ModelAdmin):
                     'date_ordered',
                     'show_shipping_address', 'show_if_shipping_is_required',
                     'cart_total', 'cart_items', 'view_products_link',
-                    'orderitems', 'loyalty_points')
+                    'orderitems', 'loyalty_points', 'comment')
     list_filter = ('complete', 'date_ordered')
     # how to filter by 'show_if_shipping_is_required'?
 
