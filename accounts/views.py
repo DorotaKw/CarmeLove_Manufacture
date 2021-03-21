@@ -72,6 +72,10 @@ def order_history(request, user_order_id):
         return render(request, 'order_history.html', context)
 
 
+def ordered_products(request):
+    pass
+
+
 # view for Customer
 def favourites(request):
     if request.user.is_authenticated:
