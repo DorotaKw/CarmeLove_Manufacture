@@ -12,7 +12,7 @@
                 <p>#{{ forloop.counter }} - Order id: {{ order.id }}</p>
                 <p>Customer: {{ order.customer }} - Complete: {{ order.complete }}</p>
                 <p>Date: {{ order.date_ordered.date }} - Time: {{ order.date_ordered.time }}</p>
-                <p>Total: {{ order.get_cart_total }} - Items: {{ order.get_cart_items }}</p>
+                <p>Total: {{ order.cart_total }} - Items: {{ order.cart_items }}</p>
                 <a href="{% url 'accounts:order_details' order.id %}">Order details</a>
                 <hr>
             </ul>

@@ -101,12 +101,12 @@
             <div>{{ item.product.name }}</div>
             <div>{{ item.product.price|floatformat:2 }}</div>
             <div>x{{ item.quantity }}</div>
-            <div>{{ item.get_total|floatformat:2 }}</div>
+            <div>{{ item.total|floatformat:2 }}</div>
         </div>
         {% endfor %}
 
-        <p>Items: {{ order.get_cart_items }}</p>
-        <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
+        <p>Items: {{ order.cart_items }}</p>
+        <p>Total: {{ order.cart_total|floatformat:2 }} PLN</p>
         <p>ORDER ID {{ order.id }}</p>
         {% if user.is_authenticated %}
             <p>Liczba Twoich punktów lojalnościowych: {{ customer.all_loyalty_points }}</p>

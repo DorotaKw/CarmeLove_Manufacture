@@ -30,7 +30,7 @@ class Customer(Model):
     # def see_history_items(self):
     #     user_orders = self.order_set.all()
     #     for user_order in user_orders:
-    #         user_items = user_order.get_orderitems
+    #         user_items = user_order.orderitems
     #     return user_items
 
 
@@ -152,12 +152,12 @@ class Order(Model):
         return str(self.id)
 
     @property
-    def get_order_no(self):
+    def order_no(self):
         order_no = self.id
         return order_no
 
     @property
-    def get_orderitems(self):
+    def orderitems(self):
         orderitems = self.orderitem_set.all()
         return orderitems
 
@@ -171,13 +171,13 @@ class Order(Model):
         return shipping
 
     @property
-    def get_cart_total(self):
+    def cart_total(self):
         orderitems = self.orderitem_set.all()
-        total = sum([item.get_total for item in orderitems])
+        total = sum([item.total for item in orderitems])
         return total
 
     @property
-    def get_cart_items(self):
+    def cart_items(self):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
@@ -190,7 +190,7 @@ class Order(Model):
             date_after_order = date_ordered + timedelta(days=1)
             date_expiration = date_after_order + timedelta(days=365)
             if date_after_order <= current_date <= date_expiration:
-                points = round(self.get_cart_total / 10)
+                points = round(self.cart_total / 10)
         else:
             points = 0
         return points
@@ -206,13 +206,13 @@ class OrderItem(Model):
         return self.product.name
 
     @property
-    def get_history_items(self):
+    def history_items(self):
         if self.order.complete is True:
             m_history_items = self.order.orderitems_set.all()
         return m_history_items
 
     @property
-    def get_total(self):
+    def total(self):
         total = self.product.price * self.quantity
         return total
 

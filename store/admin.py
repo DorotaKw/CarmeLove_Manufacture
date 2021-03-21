@@ -67,8 +67,8 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'complete',
                     'date_ordered',
                     'show_shipping_address', 'show_if_shipping_is_required',
-                    'get_cart_total', 'get_cart_items', 'view_products_link',
-                    'get_orderitems', 'loyalty_points')
+                    'cart_total', 'cart_items', 'view_products_link',
+                    'orderitems', 'loyalty_points')
     list_filter = ('complete', 'date_ordered')
     # how to filter by 'show_if_shipping_is_required'?
 
@@ -107,7 +107,7 @@ class OrderCommentAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product', 'quantity', 'get_total', 'date_added')
+    list_display = ('order', 'product', 'quantity', 'total', 'date_added')
     list_filter = ('product', 'date_added')
 
 

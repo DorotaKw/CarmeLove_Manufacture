@@ -21,7 +21,7 @@
     {% if user_orders %}
         <div>
             {% for user_order in user_orders %}
-                {% for item in user_order.get_orderitems %}
+                {% for item in user_order.orderitems %}
                     <img src="{{ item.product.imageURL }}">
                     <p>{{ item.product.name }}</p>
                 {% endfor %}

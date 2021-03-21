@@ -21,11 +21,11 @@ def set_initial_cart_status(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
     context = {'cart_items': cart_items}
     return context
 
@@ -105,7 +105,7 @@ def checkout(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
         try:
             comment = OrderComment.objects.get(order=order)
             if comment:
@@ -134,13 +134,13 @@ def checkout(request):
                     context['order_comment'] = order_comment
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
 
     # past code below:
     # earlier when user is not logged in:
     # Exception Value:
-    # Field 'id' expected a number but got {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}.
+    # Field 'id' expected a number but got {'cart_total': 0, 'cart_items': 0, 'shipping': False}.
 
     # data = cart_data(request)
     # customer = data['customer']
@@ -194,7 +194,7 @@ def process_order(request):
     total = float(data['form']['total'])
     order.transaction_id = transaction_id
 
-    if total == order.get_cart_total:
+    if total == order.cart_total:
         order.complete = True
     order.save()
 
@@ -217,7 +217,7 @@ def meta_product(request, meta_product_id):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
         form = ProductOpinionForm()
         viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
         products = viewed_meta_product.product_set.all()
@@ -240,8 +240,8 @@ def meta_product(request, meta_product_id):
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
         # for now it's the only idea I have, it's working, but view is too fat.
         # maybe JS or/and CSS will help?
         form = None
