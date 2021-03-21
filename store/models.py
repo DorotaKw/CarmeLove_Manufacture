@@ -26,12 +26,20 @@ class Customer(Model):
         total_loyalty_points = sum([order.loyalty_points for order in orders])
         return total_loyalty_points
 
-    # @property
-    # def see_history_items(self):
-    #     user_orders = self.order_set.all()
-    #     for user_order in user_orders:
-    #         user_items = user_order.get_orderitems
-    #     return user_items
+    @property
+    def bought_products(self):
+        all_orders = self.order_set.all()
+        orders = all_orders.filter(complete=True)
+        user_products = []
+        for order in orders:
+            items = order.get_orderitems
+            for item in items:
+                if item.name in user_products:
+                    pass
+                else:
+                    user_products.append(item.name)
+        history_products = set(user_products)
+        return history_products
 
 
 class Category(Model):
@@ -204,6 +212,20 @@ class OrderItem(Model):
 
     def __str__(self):
         return self.product.name
+
+    @property
+    def name(self):
+        name = self.product.name
+        return name
+
+    # @property
+    # def imageURL(self):
+    #     image = self.product.image
+    #     if image:
+    #         url = self.product.image.url
+    #     else:
+    #         url = ''
+    #     return url
 
     @property
     def get_history_items(self):

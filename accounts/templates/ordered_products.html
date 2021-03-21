@@ -4,32 +4,47 @@
 
 <div>
     <p>SIMPLE NAV JUST FOR NOW</p>
-    <p><a href="{% url 'orders_history' %}">Orders History</a></p>
-    <p><a href="{% url 'favourites' %}">Favourites</a></p>
+    <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
     <p>Products in Cart: {{ cart_items }}</p>
 
     <div>
         {% for category in categories %}
-            <strong><a href="{% url 'category' category.id %}">{{ category.name }}</a></strong>
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
         {% endfor %}
     </div>
 </div>
 
+<!--<div>-->
+<!--    <p>Customer: {{ customer }}</p>-->
+<!--    <hr>-->
+<!--    {% if user_orders %}-->
+<!--        <div>-->
+<!--            {% for user_order in user_orders %}-->
+<!--                {% for item in user_order.get_orderitems %}-->
+<!--                    <img src="{{ item.product.imageURL }}">-->
+<!--                    <p>{{ item.product.name }}</p>-->
+<!--                {% endfor %}-->
+<!--            {% endfor %}-->
+<!--        </div>-->
+<!--    {% else %}-->
+<!--        <p>You have no completed orders.</p>-->
+<!--    {% endif %}-->
+<!--</div>-->
+
 <div>
     <p>Customer: {{ customer }}</p>
-    <hr>
     {% if user_orders %}
-        <div>
-            {% for user_order in user_orders %}
-                {% for item in user_order.get_orderitems %}
-                    <img src="{{ item.product.imageURL }}">
-                    <p>{{ item.product.name }}</p>
-                {% endfor %}
-            {% endfor %}
-        </div>
+    <div>
+        {% for bought_product in customer.bought_products %}
+            <p>{{ bought_product }}</p>
+        {% endfor %}
+    </div>
     {% else %}
         <p>You have no completed orders.</p>
     {% endif %}
 </div>
+
+
 
 {% endblock content %}

@@ -72,8 +72,14 @@ def order_history(request, user_order_id):
         return render(request, 'order_history.html', context)
 
 
+# view for Customer
 def ordered_products(request):
-    pass
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        user_orders = Order.objects.filter(customer=customer, complete=True)
+        # items = user_orders.get_orderitems.all()
+        context = {'customer': customer, 'user_orders': user_orders}
+        return render(request, 'ordered_products.html', context)
 
 
 # view for Customer
