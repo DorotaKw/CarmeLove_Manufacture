@@ -100,47 +100,58 @@ def cart(request):
 
 
 def checkout(request):
-    data = cart_data(request)
-    customer = data['customer']
-
-    cart_items = data['cart_items']
-    order = data['order']
-    items = data['items']
-
     form = OrderCommentForm()
-    try:
-        # when user is not logged in:
-        # Exception Value:
-        # Field 'id' expected a number but got {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}.
-        comment = OrderComment.objects.get(order=order)
-        if comment:
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cart_items = order.get_cart_items
+        try:
+            comment = OrderComment.objects.get(order=order)
+            if comment:
+                if request.method == 'POST':
+                    comment.delete()
+                    form = OrderCommentForm(request.POST)
+                    if form.is_valid():
+                        order_comment = form.save(commit=False)
+                        # without this line, there are created new empty orders with comment
+                        # but without it, comment is still on the page
+                        order_comment.order = order
+                        # maybe save comment while make a transfer?
+                        order_comment.save()
+                        context = {}
+                        context['order_comment'] = order_comment
+                        context['customer'] = customer
+                        context['form'] = form
+        except OrderComment.DoesNotExist:
             if request.method == 'POST':
-                comment.delete()
                 form = OrderCommentForm(request.POST)
                 if form.is_valid():
                     order_comment = form.save(commit=False)
-                    # without this line, there are created new empty orders with comment
-                    # but without it, comment is still on the page
                     order_comment.order = order
-                    # maybe save comment while make a transfer?
                     order_comment.save()
                     context = {}
                     context['order_comment'] = order_comment
-    except OrderComment.DoesNotExist:
-        if request.method == 'POST':
-            form = OrderCommentForm(request.POST)
-            if form.is_valid():
-                order_comment = form.save(commit=False)
-                order_comment.order = order
-                order_comment.save()
-                context = {}
-                context['order_comment'] = order_comment
+    else:
+        items = []
+        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
+        cart_items = order['get_cart_items']
+
+    # past code below:
+    # earlier when user is not logged in:
+    # Exception Value:
+    # Field 'id' expected a number but got {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}.
+
+    # data = cart_data(request)
+    # customer = data['customer']
+    # cart_items = data['cart_items']
+    # order = data['order']
+    # items = data['items']
 
     categories = Category.objects.all()
     context = {'categories': categories,
                'items': items, 'order': order,
-               'cart_items': cart_items,
-               'form': form, 'customer': customer}
+               'cart_items': cart_items, 'form': form}
     return render(request, 'checkout.html', context)
 
 
