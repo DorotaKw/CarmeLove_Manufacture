@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+
+from .models import Article
+
+
+@admin.register(Article)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('title_main', 'preface_main',
+                    'title_midmost', 'preface_midmost', 'text')
