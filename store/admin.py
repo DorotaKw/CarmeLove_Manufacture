@@ -32,7 +32,8 @@ class CustomerAdminForm(forms.ModelForm):
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     form = CustomerAdminForm
-    list_display = ('user', 'name', 'email')
+    list_display = ('user', 'name', 'email',
+                    'all_loyalty_points', 'bought_products')
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, **kwargs)
