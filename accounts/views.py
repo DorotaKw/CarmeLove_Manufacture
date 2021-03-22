@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
-from store.models import Customer, Order, OrderItem, FavouriteProduct
+from store.models import Customer, MetaProduct, Order, OrderItem, FavouriteProduct
 
 from .forms import SignUpForm
 
@@ -70,6 +70,15 @@ def order_history(request, user_order_id):
 
         context = {'history_order': history_order, 'history_items': history_items}
         return render(request, 'order_history.html', context)
+
+
+# view for Customer
+def ordered_products(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        user_orders = Order.objects.filter(customer=customer, complete=True)
+        context = {'customer': customer, 'user_orders': user_orders}
+        return render(request, 'ordered_products.html', context)
 
 
 # view for Customer

@@ -16,22 +16,24 @@ class Customer(Model):
         return self.name
 
     @property
-    def items(self):
-        items = self.order.orderitems_set.all()
-        return items
-
-    @property
     def all_loyalty_points(self):
         orders = self.order_set.all()
         total_loyalty_points = sum([order.loyalty_points for order in orders])
         return total_loyalty_points
 
-    # @property
-    # def see_history_items(self):
-    #     user_orders = self.order_set.all()
-    #     for user_order in user_orders:
-    #         user_items = user_order.orderitems
-    #     return user_items
+    @property
+    def bought_products(self):
+        all_orders = self.order_set.all()
+        orders = all_orders.filter(complete=True)
+        user_products = []
+        for order in orders:
+            items = order.get_orderitems
+            for item in items:
+                if item.name in user_products:
+                    pass
+                else:
+                    user_products.append(item.name)
+        return user_products
 
 
 class Category(Model):
@@ -138,6 +140,26 @@ class Product(Model):
             url = ''
         return url
 
+    @property
+    def promotion_price(self):
+        promotion_price = self.productpromotion.price
+        return promotion_price
+
+    @property
+    def percentage_of_the_promotion(self):
+        promotion_value = self.productpromotion.percentage_of_the_promotion
+        return promotion_value
+
+
+class ProductPromotion(Model):
+    product = OneToOneField(Product, on_delete=CASCADE)
+    price = DecimalField(max_digits=6, decimal_places=2)
+
+    @property
+    def percentage_of_the_promotion(self):
+        value_in_percents = round((self.product.price / self.price) * 10)
+        return value_in_percents
+
 
 class Order(Model):
     class Meta:
@@ -209,6 +231,16 @@ class OrderItem(Model):
 
     def __str__(self):
         return self.product.name
+
+    @property
+    def name(self):
+        name = self.product.name
+        return name
+
+    @property
+    def meta_product(self):
+        meta_product = self.product.name
+        return meta_product
 
     @property
     def history_items(self):
