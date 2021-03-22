@@ -16,11 +16,6 @@ class Customer(Model):
         return self.name
 
     @property
-    def items(self):
-        items = self.order.orderitems_set.all()
-        return items
-
-    @property
     def all_loyalty_points(self):
         orders = self.order_set.all()
         total_loyalty_points = sum([order.loyalty_points for order in orders])
@@ -38,8 +33,7 @@ class Customer(Model):
                     pass
                 else:
                     user_products.append(item.name)
-        history_products = set(user_products)
-        return history_products
+        return user_products
 
 
 class Category(Model):
