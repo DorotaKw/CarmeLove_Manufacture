@@ -15,6 +15,8 @@ from .forms import ProductOpinionForm, OrderCommentForm
 
 from .utils import *
 
+from about_cl.models import Article
+
 
 def set_initial_cart_status(request):
     if request.user.is_authenticated:
@@ -36,8 +38,8 @@ def home(request):
     cart_items = data['cart_items']
 
     categories = Category.objects.all()
-    about = 'Hi! We are small Manufacture of Sweets!'
-    context = {'categories': categories, 'cart_items': cart_items, 'about': about}
+    articles = Article.objects.all()
+    context = {'categories': categories, 'cart_items': cart_items, 'articles': articles}
     return render(request, 'home.html', context)
 
 
