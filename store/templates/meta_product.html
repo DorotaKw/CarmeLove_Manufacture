@@ -64,7 +64,12 @@
                 <p>Package size: 24</p>
             {% endif %}
 
-            <p>price: {{ product.price|floatformat:2 }} PLN</p>
+            {% if product.promotion_price %}
+                <p>promotion price: {{ product.promotion_price|floatformat:2 }} PLN</p>
+                <p>standard price:<strike>{{ product.price|floatformat:2 }} PLN</strike></p>
+            {% else %}
+                <p>price: {{ product.price|floatformat:2 }} PLN</p>
+            {% endif %}
             <p>availability: {{ product.availability|floatformat:"0" }}</p>
             <p><strong>Buy</strong></p>
             <hr>
