@@ -32,7 +32,8 @@ class CustomerAdminForm(forms.ModelForm):
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
     form = CustomerAdminForm
-    list_display = ('user', 'name', 'email')
+    list_display = ('user', 'name', 'email',
+                    'all_loyalty_points', 'bought_products')
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -58,8 +59,14 @@ class MetaProductAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('meta_product', 'measure', 'package', 'price', 'availability')
+    list_display = ('meta_product', 'measure', 'package', 'price',
+                    'availability', 'promotion_price', 'percentage_of_the_promotion')
     list_filter = ('meta_product', 'measure', 'package', 'price')
+
+
+@admin.register(ProductPromotion)
+class ProductPromotionAdmin(admin.ModelAdmin):
+    list_display = ('product', 'price', 'percentage_of_the_promotion')
 
 
 @admin.register(Order)

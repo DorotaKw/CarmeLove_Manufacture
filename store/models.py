@@ -16,11 +16,6 @@ class Customer(Model):
         return self.name
 
     @property
-    def items(self):
-        items = self.order.orderitems_set.all()
-        return items
-
-    @property
     def all_loyalty_points(self):
         orders = self.order_set.all()
         total_loyalty_points = sum([order.loyalty_points for order in orders])
@@ -38,8 +33,7 @@ class Customer(Model):
                     pass
                 else:
                     user_products.append(item.name)
-        history_products = set(user_products)
-        return history_products
+        return user_products
 
 
 class Category(Model):
@@ -145,6 +139,26 @@ class Product(Model):
         else:
             url = ''
         return url
+
+    @property
+    def promotion_price(self):
+        promotion_price = self.productpromotion.price
+        return promotion_price
+
+    @property
+    def percentage_of_the_promotion(self):
+        promotion_value = self.productpromotion.percentage_of_the_promotion
+        return promotion_value
+
+
+class ProductPromotion(Model):
+    product = OneToOneField(Product, on_delete=CASCADE)
+    price = DecimalField(max_digits=6, decimal_places=2)
+
+    @property
+    def percentage_of_the_promotion(self):
+        value_in_percents = round((self.product.price / self.price) * 10)
+        return value_in_percents
 
 
 class Order(Model):
