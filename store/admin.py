@@ -58,8 +58,14 @@ class MetaProductAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('meta_product', 'measure', 'package', 'price', 'availability')
+    list_display = ('meta_product', 'measure', 'package', 'price',
+                    'availability', 'promotion_price', 'percentage_of_the_promotion')
     list_filter = ('meta_product', 'measure', 'package', 'price')
+
+
+@admin.register(ProductPromotion)
+class ProductPromotionAdmin(admin.ModelAdmin):
+    list_display = ('product', 'price', 'percentage_of_the_promotion')
 
 
 @admin.register(Order)
