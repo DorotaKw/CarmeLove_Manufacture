@@ -19,10 +19,15 @@ def cookie_cart(request):
             cart_items += cart[c]['quantity']
             product = Product.objects.get(id=c)
             total = (product.price * cart[c]['quantity'])
+            # if product.promotion_price:
+            #     total = (product.promotion_price ( cart[c]['quantity']))
+            # else:
+            #     total = (product.price * cart[c]['quantity'])
 
             order['get_cart_total'] += total
             order['get_cart_items'] += cart[c]['quantity']
 
+            # need to add if statement for promotion_price
             item = {
                 'product': {
                     'id': product.id,
