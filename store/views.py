@@ -5,7 +5,7 @@ from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 import json
 

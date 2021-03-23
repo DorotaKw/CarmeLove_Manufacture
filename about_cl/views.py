@@ -1,18 +1,22 @@
-from django.shortcuts import render
+from django.views.generic import DetailView
 
 from .models import Article
+
 from store.models import Category
-from store.utils import cart_data
+from store.views import set_initial_cart_status
 
 
-def about_us(request):
-    data = cart_data(request)
+class AboutCarmeLoveView(DetailView):
+    model = Article
+    template_name = 'about_carmelove.html'
 
-    cart_items = data['cart_items']
-
-    categories = Category.objects.all()
-    o_nas = Article.objects.get(title_main='O Nas')
-    context = {'categories': categories, 'cart_items': cart_items,
-               'o_nas': o_nas}
-    return render(request, 'about_us.html', context)
-
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        context.update({
+            'categories': Category.objects.all(),
+            'articles': Article.objects.all(),
+            'cart_items': cart_items,
+        })
+        return context

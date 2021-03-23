@@ -65,13 +65,13 @@
               <div class="menu-lewe-menu-container">
                 <ul class="menu">
                   <li>
-                    <a id="link3" href="#">Warsztaty</a>
+                    <a id="link3" href="{{ articles.2.get_absolute_url }}">Warsztaty</a>
                   </li>
                   <li>
-                    <a id="link2" href="#">Realizacje</a>
+                    <a id="link2" href="{{ articles.1.get_absolute_url }}">Realizacje</a>
                   </li>
                   <li>
-                    <a id="link1" href="{% url 'about_cl:about_us' %}">O Nas</a>
+                    <a id="link1" href="{{ articles.0.get_absolute_url }}">O Nas</a>
                   </li>
                 </ul>
               </div>

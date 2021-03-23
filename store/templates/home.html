@@ -68,7 +68,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ articles.0.title_midmost }}</h5>
               <p class="card-text">{{ articles.0.preface_midmost }}</p>
-              <a href="{% url 'about_cl:about_us' %}" class="btn btn-primary">Czytaj więcej</a>
+              <a href="{{ articles.0.get_absolute_url }}" class="btn btn-primary">Czytaj więcej</a>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@
               <h5 class="card-title">{{ articles.1.title_midmost }}</h5>
               <p class="card-text">{{ articles.1.preface_midmost }}
               </p>
-              <a href="#" class="btn btn-primary">Czytaj więcej</a>
+              <a href="{{ articles.1.get_absolute_url }}" class="btn btn-primary">Czytaj więcej</a>
             </div>
           </div>
         </div>
@@ -89,7 +89,7 @@
             <div class="card-body">
               <h5 class="card-title">{{ articles.2.title_midmost }}</h5>
               <p class="card-text">{{ articles.2.preface_midmost }}</p>
-              <a href="#" class="btn btn-primary">Czytaj więcej</a>
+              <a href="{{ articles.2.get_absolute_url }}" class="btn btn-primary">Czytaj więcej</a>
             </div>
           </div>
         </div>

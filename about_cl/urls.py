@@ -5,5 +5,5 @@ from .views import *
 app_name = 'about_cl'
 
 urlpatterns = [
-    path('', about_us, name="about_us"),
+    path('<slug:slug>/', AboutCarmeLoveView.as_view(), name='about_carmelove'),
 ]
