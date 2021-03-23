@@ -268,7 +268,7 @@ class OrderComment(Model):
         verbose_name_plural = 'Orders Comments'
 
     order = OneToOneField(Order, on_delete=CASCADE, null=True, blank=True)
-    comment = CharField(max_length=500, null=True, blank=True)
+    comment = TextField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.comment
