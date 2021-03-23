@@ -54,9 +54,9 @@
     <div id="our-mission" class="container-fluid">
       <div class="row">
         <div class="col">
-          <h1 class="display-2">{{ o_nas.title_main }}</h1>
+          <h1 class="display-2">{{ articles.0.title_main }}</h1>
           <p class="lead">
-            {{ o_nas.preface_main }}
+            {{ articles.0.preface_main }}
           </p>
           <br>
         </div>
@@ -66,8 +66,8 @@
           <div class="card">
             <img src="{% static 'images/pops_hearts.jpg' %}" class="card-img-top" alt="Pops_Hearts">
             <div class="card-body">
-              <h5 class="card-title">{{ o_nas.title_midmost }}</h5>
-              <p class="card-text">{{ o_nas.preface_midmost }}</p>
+              <h5 class="card-title">{{ articles.0.title_midmost }}</h5>
+              <p class="card-text">{{ articles.0.preface_midmost }}</p>
               <a href="{% url 'about_cl:about_us' %}" class="btn btn-primary">Czytaj więcej</a>
             </div>
           </div>
@@ -76,8 +76,8 @@
           <div class="card">
             <img src="{% static 'images/candybar.jpg' %}" class="card-img-top" alt="Candy_Bar">
             <div class="card-body">
-              <h5 class="card-title">{{ realizacje.title_midmost }}</h5>
-              <p class="card-text">{{ realizacje.preface_midmost }}
+              <h5 class="card-title">{{ articles.1.title_midmost }}</h5>
+              <p class="card-text">{{ articles.1.preface_midmost }}
               </p>
               <a href="#" class="btn btn-primary">Czytaj więcej</a>
             </div>
@@ -87,8 +87,8 @@
           <div class="card">
             <img src="{% static 'images/yoghurt_berries.jpg' %}" class="card-img-top" alt="Yoghyrt_Berries">
             <div class="card-body">
-              <h5 class="card-title">{{ warsztaty.title_midmost }}</h5>
-              <p class="card-text">{{ warsztaty.preface_midmost }}</p>
+              <h5 class="card-title">{{ articles.2.title_midmost }}</h5>
+              <p class="card-text">{{ articles.2.preface_midmost }}</p>
               <a href="#" class="btn btn-primary">Czytaj więcej</a>
             </div>
           </div>
