@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<h1>{{ o_nas.title_main }}</h1>
+
+{% if o_nas.preface_main %}
+    <h3>{{ o_nas.preface_main }}</h3>
+{% endif %}
+
+{% if o_nas.title_midmost %}
+    <h2>{{ o_nas.tittle_midmost }}</h2>
+{% endif %}
+
+{% if o_nas.preface_main %}
+    <h3>{{ o_nas.preface_midmost }}</h3>
+{% endif %}
+
+<h4>{{ o_nas.text }}</h4>
+
+{% endblock content %}
