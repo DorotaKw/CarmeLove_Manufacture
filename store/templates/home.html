@@ -54,15 +54,9 @@
     <div id="our-mission" class="container-fluid">
       <div class="row">
         <div class="col">
-          <h1 class="display-2">O Nas</h1>
+          <h1 class="display-2">{{ o_nas.title_main }}</h1>
           <p class="lead">
-            Jesteśmy rodzinna firmą z tradycjami i zamiłowaniem do cukiernictwa. Sami wytwarzamy nasze
-            słodycze,
-            używając do tego  tylko najlepszych produktów, pozbawionych sztucznych barwników i wypełniaczy
-            smaku. Do
-            pracy podchodzimy z pasją po to, aby zapewnić naszym klientom usługi oraz produkty najwyższej
-            jakości.
-            Sprawdź nas!
+            {{ o_nas.preface_main }}
           </p>
           <br>
         </div>
@@ -72,10 +66,8 @@
           <div class="card">
             <img src="{% static 'images/pops_hearts.jpg' %}" class="card-img-top" alt="Pops_Hearts">
             <div class="card-body">
-              <h5 class="card-title">Robimy słodycze!</h5>
-              <p class="card-text">Zajmujemy się wytwarzaniem słodyczy z ekologicznych produktów. Wszystko
-                odbywa się na
-                oczach naszych gości! Serdecznie zapraszamy osoby indywidualne jak i grupy.</p>
+              <h5 class="card-title">{{ o_nas.title_midmost }}</h5>
+              <p class="card-text">{{ o_nas.preface_midmost }}</p>
               <a href="#" class="btn btn-primary">Czytaj więcej</a>
             </div>
           </div>
