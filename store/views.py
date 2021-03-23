@@ -40,8 +40,11 @@ def home(request):
     categories = Category.objects.all()
     articles = Article.objects.all()
     o_nas = Article.objects.get(title_main='O Nas')
-
-    context = {'categories': categories, 'cart_items': cart_items, 'o_nas': o_nas}
+    realizacje = Article.objects.get(title_main='Realizacje')
+    warsztaty = Article.objects.get(title_main='Warsztaty')
+    context = {'categories': categories, 'cart_items': cart_items,
+               'o_nas': o_nas, 'realizacje': realizacje,
+               'warsztaty': warsztaty}
     return render(request, 'home.html', context)
 
 

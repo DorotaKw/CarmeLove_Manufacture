@@ -76,8 +76,8 @@
           <div class="card">
             <img src="{% static 'images/candybar.jpg' %}" class="card-img-top" alt="Candy_Bar">
             <div class="card-body">
-              <h5 class="card-title">Obsługujemy imprezy</h5>
-              <p class="card-text">CarmeLove świetnie uatrakcyjni każdą imprezę. Chcesz zaskoczyć swoich gosći niezapomnianym widokiem łakoci? Skontaktuj się z nami, a Twoje przyjęcie będzie najsłodsze na świecie!
+              <h5 class="card-title">{{ realizacje.title_midmost }}</h5>
+              <p class="card-text">{{ realizacje.preface_midmost }}
               </p>
               <a href="#" class="btn btn-primary">Czytaj więcej</a>
             </div>
@@ -87,10 +87,8 @@
           <div class="card">
             <img src="{% static 'images/yoghurt_berries.jpg' %}" class="card-img-top" alt="Yoghyrt_Berries">
             <div class="card-body">
-              <h5 class="card-title">CarmeLove warsztaty</h5>
-              <p class="card-text">Zapraszamy wszystkich na warsztaty i pokazy ręcznie wytwarzanych
-                słodyczy – lizaków,
-                cukierków, ciastek i innych – dotknij, poczuj i spróbuj jak to jest być cukiernikiem!</p>
+              <h5 class="card-title">{{ warsztaty.title_midmost }}</h5>
+              <p class="card-text">{{ warsztaty.preface_midmost }}</p>
               <a href="#" class="btn btn-primary">Czytaj więcej</a>
             </div>
           </div>
