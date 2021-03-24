@@ -8,7 +8,7 @@
     <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
     <hr>
     <p>Products in Cart: {{ cart_items }}</p>
-
+    <p><strong><a href="{% url 'store:categories' %}">ALL CATEGORIES</a></strong></p>
     <div>
         {% for category in categories %}
             <strong><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></strong>
