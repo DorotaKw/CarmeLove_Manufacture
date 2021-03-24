@@ -45,6 +45,7 @@ class StoreView(ListView):
     template_name = 'store.html'
     context_object_name = 'meta_products'
     model = MetaProduct
+    paginate_by = 6
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -64,6 +65,7 @@ class CategoriesView(ListView):
     template_name = 'categories.html'
     context_object_name = 'categories'
     model = Category
+    paginate_by = 6
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
