@@ -13,6 +13,10 @@
             <strong><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></strong>
         {% endfor %}
     </div>
+
+    <div>
+        <p><a href="{% url 'store:store' %}">Back to Store</a></p>
+    </div>
 </div>
 
 <div>

@@ -2,6 +2,27 @@
 {% load static %}
 {% block content %}
 
+
+<div>
+    <p>SIMPLE NAV JUST FOR NOW</p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
+    <hr>
+    <p>Products in Cart: {{ cart_items }}</p>
+
+    <div>
+        {% for category in categories %}
+            <strong><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></strong>
+        {% endfor %}
+    </div>
+
+    <div>
+        <p><a href="{% url 'store:store' %}">Back to Store</a></p>
+    </div>
+
+</div>
+
+
+
 <div>
     {% if categories %}
         <div>

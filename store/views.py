@@ -65,6 +65,16 @@ class CategoriesView(ListView):
     context_object_name = 'categories'
     model = Category
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        context.update({
+            'categories': Category.objects.all(),
+            'cart_items': cart_items,
+        })
+        return context
+
     def get_queryset(self):
         return Category.objects.order_by('name')
 
