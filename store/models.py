@@ -3,7 +3,9 @@ from datetime import datetime, timedelta
 from django.contrib.auth.models import User
 from django.db.models import BooleanField, CASCADE, CharField, DateTimeField, DecimalField, \
     F, FloatField, ForeignKey, ImageField, \
-    IntegerField, Model, OneToOneField, SET_NULL, TextField, ManyToOneRel
+    IntegerField, Model, OneToOneField, SET_NULL, TextField, ManyToOneRel, SlugField
+from django.template.defaultfilters import slugify
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -43,6 +45,7 @@ class Category(Model):
 
     name = CharField(max_length=30)
     image = ImageField(null=True, blank=True)
+    slug = SlugField(null=False, unique=True)
 
     def __str__(self):
         return self.name
@@ -54,6 +57,14 @@ class Category(Model):
         else:
             url = ''
         return url
+
+    def get_absolute_url(self):
+        return reverse('store:category', kwargs={'slug': self.slug})
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
 
 
 MEASURE_TYPE = (

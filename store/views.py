@@ -78,8 +78,8 @@ class CategoryView(ListView):
         cart_item = set_initial_cart_status(request=self.request)
         cart_items = cart_item.get('cart_items')
         categories = Category.objects.all()
-        viewed_category = get_object_or_404(Category, id=self.kwargs['category_id'])
-        meta_products = MetaProduct.objects.filter(category=self.kwargs['category_id']).order_by('name').all()
+        viewed_category = get_object_or_404(Category, slug=self.kwargs['slug'])
+        meta_products = MetaProduct.objects.filter(category__slug=self.kwargs['slug']).order_by('name').all()
         context = {'categories': categories,
                    'viewed_category': viewed_category,
                    'meta_products': meta_products,

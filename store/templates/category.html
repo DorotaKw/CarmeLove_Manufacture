@@ -10,7 +10,7 @@
 
     <div>
         {% for category in categories %}
-            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
+            <strong><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></strong>
         {% endfor %}
     </div>
 </div>
