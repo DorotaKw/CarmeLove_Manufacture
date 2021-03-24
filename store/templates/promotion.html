@@ -12,26 +12,105 @@
         {% for category in categories %}
             <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
         {% endfor %}
+        <strong><a href="{% url 'store:promotions' %}">Promotions</a></strong>
     </div>
 </div>
 
-    <strong>{{ viewed_category.name }}</strong>
+<div>
+    <strong>{{ promotion.category }}</strong>
+</div>
 
+<div>
+    <img src="{{ promotion.imageURL }}">
     <div>
-        {% if meta_products %}
-            {% for meta_product in meta_products %}
-            <img src="{{ meta_product.imageURL }}">
-            <div>
-                <strong>{{ meta_product.name }}</strong>
-<!--                What do you think about display category name one more time?-->
-<!--                <p>category: {{ meta_product.category }}</p>-->
-                <a href="{% url 'store:meta_product' meta_product.id %}">More...</a>
-                <hr>
-            </div>
-            {% endfor %}
+        <strong>{{ promotion.name }}</strong>
+        {% if favourite.favourite == True %}
+        <p>You have fav this!</p>
         {% else %}
-            <p>Sorry, we're out of stock!</p>
+        <p>You didn't fav this prod</p>
         {% endif %}
+        <p>category: {{ promotion.category }}</p>
+        <p>description: {{ promotion.description }}</p>
+        {% if promotion.digital %}
+            <p>Digital</p>
+        {% endif %}
+        <div>
+            {% if promotion.measure == 1 %}
+                <p>Kind of measure: By Weight</p>
+            {% elif promotion.measure == 2 %}
+                <p>Kind of measure: By Quantity</p>
+            {% endif %}
+        </div>
     </div>
+    <div>
+        <h3>Available package sizes:</h3>
+            {% if promotion.package == 1 %}
+                <p>Package size: 100 gr</p>
+            {% elif promotion.package == 2 %}
+                <p>Package size: 250 gr</p>
+            {% elif promotion.package == 3 %}
+                <p>Package size: 500 gr</p>
+            {% elif promotion.package == 4 %}
+                <p>Package size: 1 kg</p>
+            {% elif promotion.package == 5 %}
+                <p>Package size: 1</p>
+            {% elif promotion.package == 6 %}
+                <p>Package size: 4</p>
+            {% elif promotion.package == 7 %}
+                <p>Package size: 6</p>
+            {% elif promotion.package == 8 %}
+                <p>Package size: 12</p>
+            {% else %}
+                <p>Package size: 24</p>
+            {% endif %}
+
+
+            <p>promotion price: {{ promotion.price|floatformat:2 }} PLN</p>
+            <p>standard price:<strike>{{ promotion.standard_price|floatformat:2 }} PLN</strike></p>
+            <p>availability: {{ promotion.availability|floatformat:"0" }}</p>
+            <p><strong>Buy</strong></p>
+            <hr>
+    </div>
+{% if user.is_authenticated %}
+    <div>
+        <form method="post">
+            {% csrf_token %}
+            <p>Stars: {{ form.rating }}</p>
+            <p>Title: {{ form.title }}</p>
+            <p>Opinion: {{ form.opinion }}</p>
+            <input type="submit" value="Submit" name="Create Opinion">
+        </form>
+    </div>
+{% endif %}
+
+    {% comment %}
+    For now this is working.
+    Need to implement 'add opinion for promotion product'
+    {% endcomment %}
+
+<div>
+    {% if opinions %}
+        {% for opinion in opinions %}
+            <div>
+                {% if opinion.rating %}
+                <p>Rating (Stars): {{ opinion.rating }}</p>
+                {% endif %}
+                {% if opinion.title %}
+                <p>Title: {{ opinion.title }}</p>
+                {% endif %}
+                {% if opinion.opinion %}
+                <p>Opinion: {{ opinion.opinion }}</p>
+                {% endif %}
+                <p>Customer: {{ opinion.customer }}</p>
+                <p>Date: {{ opinion.date_created }}</p>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        {% if user.is_authenticated %}
+        <p>This product has no opinion yet. You can be first!</p>
+        {% endif %}
+    {% endif %}
+</div>
 
 {% endblock content %}

@@ -160,6 +160,55 @@ class ProductPromotion(Model):
         value_in_percents = round((self.product.price / self.price) * 10)
         return value_in_percents
 
+    @property
+    def name(self):
+        name = self.product
+        return name
+
+    @property
+    def availability(self):
+        availability = self.product.availability
+        return availability
+
+    @property
+    def category(self):
+        category = self.product.meta_product.category
+        return category
+
+    @property
+    def description(self):
+        description = self.product.meta_product.description
+        return description
+
+    @property
+    def digital(self):
+        digital = self.product
+        return digital
+
+    @property
+    def imageURL(self):
+        image = self.product.meta_product.image
+        if image:
+            url = self.product.meta_product.image.url
+        else:
+            url = ''
+        return url
+
+    @property
+    def measure(self):
+        measure = self.product.measure
+        return measure
+
+    @property
+    def package(self):
+        package = self.product.package
+        return package
+
+    @property
+    def standard_price(self):
+        standard_price = self.product.price
+        return standard_price
+
 
 class Order(Model):
     class Meta:
