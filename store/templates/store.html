@@ -26,7 +26,7 @@
         <div>
             <strong>{{ meta_product.name }}</strong>
             <p>category: {{ meta_product.category }}</p>
-            <a href="{% url 'store:meta_product' meta_product.id %}">More...</a>
+            <a href="{{ meta_product.get_absolute_url }}">More...</a>
             <hr>
         </div>
         {% endfor %}

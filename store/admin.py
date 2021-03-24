@@ -56,6 +56,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class MetaProductAdmin(admin.ModelAdmin):
     list_display = ('category', 'name', 'availability', 'digital', 'description', 'image')
     list_filter = ('category', 'availability', 'digital')
+    prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(Product)

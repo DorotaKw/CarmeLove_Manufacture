@@ -211,7 +211,7 @@ def process_order(request):
     return JsonResponse('Payment submitted...', safe=False)
 
 
-def meta_product(request, meta_product_id):
+def meta_product(request, slug):
     categories = Category.objects.all()
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -219,7 +219,7 @@ def meta_product(request, meta_product_id):
         items = order.orderitem_set.all()
         cart_items = order.get_cart_items
         form = ProductOpinionForm()
-        viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
+        viewed_meta_product = MetaProduct.objects.get(slug=slug)
         products = viewed_meta_product.product_set.all()
         opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
         if request.method == 'POST':
@@ -247,7 +247,7 @@ def meta_product(request, meta_product_id):
         form = None
 
     categories = Category.objects.all()
-    viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
+    viewed_meta_product = MetaProduct.objects.get(slug=slug)
     products = viewed_meta_product.product_set.all()
     opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
     context = {'categories': categories,
