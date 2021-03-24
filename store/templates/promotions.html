@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div>
+    {% if promotions %}
+        <div>
+            {% for promotion in object_list %}
+                <div>
+                    <img src="{{ promotion.product.imageURL }}">
+                    <p><strong><a href="{% url 'store:promotion' promotion.id %}">{{ promotion.name }}</a></strong></p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{% endblock content %}
