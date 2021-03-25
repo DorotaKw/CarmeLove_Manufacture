@@ -144,6 +144,7 @@
       <div class="footer-text">Kontakt z Nami</div>
       <div id="contact-form">
         <form action="mailto:biuro@carmelove.com" method="post">
+          {% csrf_token %}
           <input type="text" name="name" placeholder="Name" required>
           <input type="email" name="email" placeholder="Email" required>
           <br>
