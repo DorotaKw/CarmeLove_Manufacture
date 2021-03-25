@@ -42,38 +42,44 @@
         </div>
     </div>
     <div>
-        <h3>Available package sizes:</h3>
-        {% for product in products %}
-            {% if product.package == 1 %}
-                <p>Package size: 100 gr</p>
-            {% elif product.package == 2 %}
-                <p>Package size: 250 gr</p>
-            {% elif product.package == 3 %}
-                <p>Package size: 500 gr</p>
-            {% elif product.package == 4 %}
-                <p>Package size: 1 kg</p>
-            {% elif product.package == 5 %}
-                <p>Package size: 1</p>
-            {% elif product.package == 6 %}
-                <p>Package size: 4</p>
-            {% elif product.package == 7 %}
-                <p>Package size: 6</p>
-            {% elif product.package == 8 %}
-                <p>Package size: 12</p>
-            {% else %}
-                <p>Package size: 24</p>
-            {% endif %}
+        {% if products %}
+            <h3>Available package sizes:</h3>
+            {% for product in products %}
+                {% if product.package == 1 %}
+                    <p>Package size: 100 gr</p>
+                {% elif product.package == 2 %}
+                    <p>Package size: 250 gr</p>
+                {% elif product.package == 3 %}
+                    <p>Package size: 500 gr</p>
+                {% elif product.package == 4 %}
+                    <p>Package size: 1 kg</p>
+                {% elif product.package == 5 %}
+                    <p>Package size: 1</p>
+                {% elif product.package == 6 %}
+                    <p>Package size: 4</p>
+                {% elif product.package == 7 %}
+                    <p>Package size: 6</p>
+                {% elif product.package == 8 %}
+                    <p>Package size: 12</p>
+                {% else %}
+                    <p>Package size: 24</p>
+                {% endif %}
 
-            {% if product.promotion_price %}
-                <p>promotion price: {{ product.promotion_price|floatformat:2 }} PLN</p>
-                <p>standard price:<strike>{{ product.price|floatformat:2 }} PLN</strike></p>
-            {% else %}
-                <p>price: {{ product.price|floatformat:2 }} PLN</p>
-            {% endif %}
-            <p>availability: {{ product.availability|floatformat:"0" }}</p>
-            <p><strong>Buy</strong></p>
+                {% if product.promotion_price %}
+                    <p>promotion price: {{ product.promotion_price|floatformat:2 }} PLN</p>
+                    <p>standard price:<strike>{{ product.price|floatformat:2 }} PLN</strike></p>
+                {% else %}
+                    <p>price: {{ product.price|floatformat:2 }} PLN</p>
+                {% endif %}
+                <p>availability: {{ product.availability|floatformat:"0" }}</p>
+                <p><strong>Buy</strong></p>
+                <hr>
+            {% endfor %}
+        {% else %}
             <hr>
-        {% endfor %}
+            <p>Sorry, we're out of stock!</p>
+            <hr>
+        {% endif %}
 
     </div>
 {% if user.is_authenticated %}
