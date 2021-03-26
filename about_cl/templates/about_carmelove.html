@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<h1>{{ article.title_main }}</h1>
+
+{% if article.preface_main %}
+    <h3>{{ article.preface_main }}</h3>
+{% endif %}
+
+{% if article.title_midmost %}
+    <h2>{{ article.title_midmost }}</h2>
+{% endif %}
+
+{% if article.preface_midmost %}
+    <h3>{{ article.preface_midmost }}</h3>
+{% endif %}
+
+<h4>{{ article.text }}</h4>
+
+{% endblock content %}

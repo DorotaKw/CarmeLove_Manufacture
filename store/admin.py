@@ -44,6 +44,7 @@ class CustomerAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
+    prepopulated_fields = {'slug': ('name',)}
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -55,6 +56,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class MetaProductAdmin(admin.ModelAdmin):
     list_display = ('category', 'name', 'availability', 'digital', 'description', 'image')
     list_filter = ('category', 'availability', 'digital')
+    prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(Product)
@@ -74,8 +76,8 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer', 'complete',
                     'date_ordered',
                     'show_shipping_address', 'show_if_shipping_is_required',
-                    'get_cart_total', 'get_cart_items', 'view_products_link',
-                    'get_orderitems', 'loyalty_points')
+                    'cart_total', 'cart_items', 'view_products_link',
+                    'orderitems', 'loyalty_points', 'comment')
     list_filter = ('complete', 'date_ordered')
     # how to filter by 'show_if_shipping_is_required'?
 
@@ -114,7 +116,7 @@ class OrderCommentAdmin(admin.ModelAdmin):
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
-    list_display = ('order', 'product', 'quantity', 'get_total', 'date_added')
+    list_display = ('order', 'product', 'quantity', 'total', 'date_added')
     list_filter = ('product', 'date_added')
 
 

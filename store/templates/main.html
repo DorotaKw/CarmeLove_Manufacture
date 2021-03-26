@@ -65,13 +65,13 @@
               <div class="menu-lewe-menu-container">
                 <ul class="menu">
                   <li>
-                    <a id="link3" href="#">Warsztaty</a>
+                    <a id="link3" href="{{ articles.2.get_absolute_url }}">Warsztaty</a>
                   </li>
                   <li>
-                    <a id="link2" href="#">Realizacje</a>
+                    <a id="link2" href="{{ articles.1.get_absolute_url }}">Realizacje</a>
                   </li>
                   <li>
-                    <a id="link1" href="#">O Nas</a>
+                    <a id="link1" href="{{ articles.0.get_absolute_url }}">O Nas</a>
                   </li>
                 </ul>
               </div>
@@ -109,7 +109,7 @@
                     </ul>
                   </li>
                   <li>
-                    <a id="link5" href="#">Promocje</a>
+                    <a id="link5" href="{% url 'store:promotions' %}">Promocje</a>
                   </li>
                   <li>
                     <a id="link6" href="#">Kontakt</a>
@@ -144,6 +144,7 @@
       <div class="footer-text">Kontakt z Nami</div>
       <div id="contact-form">
         <form action="mailto:biuro@carmelove.com" method="post">
+          {% csrf_token %}
           <input type="text" name="name" placeholder="Name" required>
           <input type="email" name="email" placeholder="Email" required>
           <br>
@@ -183,6 +184,6 @@
     crossorigin="anonymous"></script>
   <a href="#" class="scroll-up"><img src="{% static 'images/scrollup.png' %}" alt="ScrollUp"></a>
 
-{#<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>#}
+<!--<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>-->
 </body>
 </html>

@@ -47,7 +47,7 @@ class ProfileView(LoginRequiredMixin, ListView):
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     context.update({
-    #         'orders_items': history_order.get_orderitems,
+    #         'orders_items': history_order.orderitems,
     #     })
     #     return context
 
@@ -66,7 +66,7 @@ def order_history(request, user_order_id):
     if request.user.is_authenticated:
         customer = request.user.customer
         history_order = Order.objects.get(customer=customer, id=user_order_id)
-        history_items = history_order.get_orderitems
+        history_items = history_order.orderitems
 
         context = {'history_order': history_order, 'history_items': history_items}
         return render(request, 'order_history.html', context)
@@ -87,14 +87,14 @@ def favourites(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
         user_favourites = FavouriteProduct.objects.filter(customer=customer, favourite=True)
         context = {'user_favourites': user_favourites, 'cart_items': cart_items}
         return render(request, 'favourites.html', context)
     # else:
     #     items = []
-    #     order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-    #     cart_items = order['get_cart_items']
+    #     order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+    #     cart_items = order['cart_items']
 
 
 # view for Staff
@@ -115,7 +115,7 @@ class OrdersView(StaffRequiredMixin, PermissionRequiredMixin, ListView):
 @staff_member_required
 def order_details(request, order_details_id):
     viewed_order = Order.objects.get(id=order_details_id)
-    order_items = viewed_order.get_orderitems
+    order_items = viewed_order.orderitems
     order_comment = viewed_order.comment
     context = {'viewed_order': viewed_order, 'order_items': order_items, 'order_comment': order_comment}
     return render(request, 'order_details.html', context)
@@ -135,7 +135,7 @@ class OrdersCompletedView(StaffRequiredMixin, PermissionRequiredMixin, ListView)
 @staff_member_required
 def completed_order_details(request, completed_order_details_id):
     viewed_order_completed = Order.objects.get(id=completed_order_details_id)
-    order_items = viewed_order_completed.get_orderitems
+    order_items = viewed_order_completed.orderitems
     context = {'viewed_order_completed': viewed_order_completed, 'order_items': order_items}
     return render(request, 'completed_order_details.html', context)
 
