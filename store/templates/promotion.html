@@ -17,71 +17,59 @@
 </div>
 
 <div>
-    <strong>{{ meta_product.category }}</strong>
+    <strong>{{ promotion.category }}</strong>
 </div>
 
 <div>
-    <img src="{{ meta_product.imageURL }}">
+    <img src="{{ promotion.imageURL }}">
     <div>
-        <strong>{{ meta_product.name }}</strong>
+        <strong>{{ promotion.name }}</strong>
         {% if favourite.favourite == True %}
         <p>You have fav this!</p>
         {% else %}
         <p>You didn't fav this prod</p>
         {% endif %}
-        <p>category: {{ meta_product.category }}</p>
-        <p>description: {{ meta_product.description }}</p>
-        {% if meta_product.digital %}
+        <p>category: {{ promotion.category }}</p>
+        <p>description: {{ promotion.description }}</p>
+        {% if promotion.digital %}
             <p>Digital</p>
         {% endif %}
         <div>
-            {% if meta_product.measure == 1 %}
+            {% if promotion.measure == 1 %}
                 <p>Kind of measure: By Weight</p>
-            {% elif meta_product.measure == 2 %}
+            {% elif promotion.measure == 2 %}
                 <p>Kind of measure: By Quantity</p>
             {% endif %}
         </div>
     </div>
     <div>
-        {% if products %}
-            <h3>Available package sizes:</h3>
-            {% for product in products %}
-                {% if product.package == 1 %}
-                    <p>Package size: 100 gr</p>
-                {% elif product.package == 2 %}
-                    <p>Package size: 250 gr</p>
-                {% elif product.package == 3 %}
-                    <p>Package size: 500 gr</p>
-                {% elif product.package == 4 %}
-                    <p>Package size: 1 kg</p>
-                {% elif product.package == 5 %}
-                    <p>Package size: 1</p>
-                {% elif product.package == 6 %}
-                    <p>Package size: 4</p>
-                {% elif product.package == 7 %}
-                    <p>Package size: 6</p>
-                {% elif product.package == 8 %}
-                    <p>Package size: 12</p>
-                {% else %}
-                    <p>Package size: 24</p>
-                {% endif %}
+        <h3>Available package sizes:</h3>
+            {% if promotion.package == 1 %}
+                <p>Package size: 100 gr</p>
+            {% elif promotion.package == 2 %}
+                <p>Package size: 250 gr</p>
+            {% elif promotion.package == 3 %}
+                <p>Package size: 500 gr</p>
+            {% elif promotion.package == 4 %}
+                <p>Package size: 1 kg</p>
+            {% elif promotion.package == 5 %}
+                <p>Package size: 1</p>
+            {% elif promotion.package == 6 %}
+                <p>Package size: 4</p>
+            {% elif promotion.package == 7 %}
+                <p>Package size: 6</p>
+            {% elif promotion.package == 8 %}
+                <p>Package size: 12</p>
+            {% else %}
+                <p>Package size: 24</p>
+            {% endif %}
 
-                {% if product.promotion_price %}
-                    <p>promotion price: {{ product.promotion_price|floatformat:2 }} PLN</p>
-                    <p>standard price:<strike>{{ product.price|floatformat:2 }} PLN</strike></p>
-                {% else %}
-                    <p>price: {{ product.price|floatformat:2 }} PLN</p>
-                {% endif %}
-                <p>availability: {{ product.availability|floatformat:"0" }}</p>
-                <p><strong>Buy</strong></p>
-                <hr>
-            {% endfor %}
-        {% else %}
-            <hr>
-            <p>Sorry, we're out of stock!</p>
-            <hr>
-        {% endif %}
 
+            <p>promotion price: {{ promotion.price|floatformat:2 }} PLN</p>
+            <p>standard price:<strike>{{ promotion.standard_price|floatformat:2 }} PLN</strike></p>
+            <p>availability: {{ promotion.availability|floatformat:"0" }}</p>
+            <p><strong>Buy</strong></p>
+            <hr>
     </div>
 {% if user.is_authenticated %}
     <div>
@@ -94,6 +82,11 @@
         </form>
     </div>
 {% endif %}
+
+    {% comment %}
+    For now this is working.
+    Need to implement 'add opinion for promotion product'
+    {% endcomment %}
 
 <div>
     {% if opinions %}
@@ -121,4 +114,3 @@
 </div>
 
 {% endblock content %}
-

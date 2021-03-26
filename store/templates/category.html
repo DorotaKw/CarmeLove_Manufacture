@@ -12,6 +12,7 @@
         {% for category in categories %}
             <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
         {% endfor %}
+        <strong><a href="{% url 'store:promotions' %}">Promotions</a></strong>
     </div>
 </div>
 

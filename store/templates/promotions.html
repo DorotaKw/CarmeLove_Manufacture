@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+
+<div>
+    <p>SIMPLE NAV JUST FOR NOW</p>
+    <p><a href="{% url 'accounts:orders_history' %}">Orders History</a></p>
+    <p><a href="{% url 'accounts:favourites' %}">Favourites</a></p>
+    <p>Products in Cart: {{ cart_items }}</p>
+
+    <div>
+        {% for category in categories %}
+            <strong><a href="{% url 'store:category' category.id %}">{{ category.name }}</a></strong>
+        {% endfor %}
+        <strong><a href="{% url 'store:promotions' %}">Promotions</a></strong>
+    </div>
+</div>
+
+<div>
+    <strong>PROMOTIONS</strong>
+</div>
+
+<div>
+    {% if promotions %}
+        <div>
+            {% for promotion in object_list %}
+                <div>
+                    <img src="{{ promotion.product.imageURL }}">
+                    <p><strong><a href="{% url 'store:promotion' promotion.id %}">{{ promotion.product.name }}</a></strong></p>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{% endblock content %}

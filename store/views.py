@@ -87,6 +87,36 @@ class CategoryView(ListView):
         return context
 
 
+class PromotionsView(ListView):
+    template_name = 'promotions.html'
+    context_object_name = 'promotions'
+    model = ProductPromotion
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        context.update({
+            'categories': Category.objects.all(),
+            'cart_items': cart_items,
+        })
+        return context
+
+    def get_queryset(self):
+        return ProductPromotion.objects.all().order_by('product')
+
+
+def promotion_details(request, promotion_id):
+    categories = Category.objects.all()
+    promotion = ProductPromotion.objects.get(id=promotion_id)
+    cart_item = set_initial_cart_status(request=request)
+    cart_items = cart_item.get('cart_items')
+    context = {'categories': categories,
+               'promotion': promotion,
+               'cart_items': cart_items}
+    return render(request, 'promotion.html', context)
+
+
 def cart(request):
     data = cart_data(request)
 
