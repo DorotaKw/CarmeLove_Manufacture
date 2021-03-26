@@ -49,6 +49,7 @@ class StoreView(ListView):
     template_name = 'store.html'
     context_object_name = 'meta_products'
     model = MetaProduct
+    paginate_by = 6
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -68,6 +69,17 @@ class CategoriesView(ListView):
     template_name = 'categories.html'
     context_object_name = 'categories'
     model = Category
+    paginate_by = 6
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        context.update({
+            'categories': Category.objects.all(),
+            'cart_items': cart_items,
+        })
+        return context
 
     def get_queryset(self):
         return Category.objects.order_by('name')
@@ -82,8 +94,8 @@ class CategoryView(ListView):
         cart_item = set_initial_cart_status(request=self.request)
         cart_items = cart_item.get('cart_items')
         categories = Category.objects.all()
-        viewed_category = get_object_or_404(Category, id=self.kwargs['category_id'])
-        meta_products = MetaProduct.objects.filter(category=self.kwargs['category_id']).order_by('name').all()
+        viewed_category = get_object_or_404(Category, slug=self.kwargs['slug'])
+        meta_products = MetaProduct.objects.filter(category__slug=self.kwargs['slug']).order_by('name').all()
         context = {'categories': categories,
                    'viewed_category': viewed_category,
                    'meta_products': meta_products,
@@ -245,7 +257,7 @@ def process_order(request):
     return JsonResponse('Payment submitted...', safe=False)
 
 
-def meta_product(request, meta_product_id):
+def meta_product(request, slug):
     categories = Category.objects.all()
     if request.user.is_authenticated:
         customer = request.user.customer
@@ -253,7 +265,7 @@ def meta_product(request, meta_product_id):
         items = order.orderitem_set.all()
         cart_items = order.cart_items
         form = ProductOpinionForm()
-        viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
+        viewed_meta_product = MetaProduct.objects.get(slug=slug)
         products = viewed_meta_product.product_set.all()
         opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
         if request.method == 'POST':
@@ -281,7 +293,7 @@ def meta_product(request, meta_product_id):
         form = None
 
     categories = Category.objects.all()
-    viewed_meta_product = MetaProduct.objects.get(id=meta_product_id)
+    viewed_meta_product = MetaProduct.objects.get(slug=slug)
     products = viewed_meta_product.product_set.all()
     opinions = ProductOpinion.objects.filter(product=viewed_meta_product)
     context = {'categories': categories,

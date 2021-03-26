@@ -44,6 +44,7 @@ class CustomerAdmin(admin.ModelAdmin):
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name',)
+    prepopulated_fields = {'slug': ('name',)}
 
     def get_form(self, request, obj=None, change=False, **kwargs):
         form = super().get_form(request, obj, **kwargs)
@@ -55,6 +56,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class MetaProductAdmin(admin.ModelAdmin):
     list_display = ('category', 'name', 'availability', 'digital', 'description', 'image')
     list_filter = ('category', 'availability', 'digital')
+    prepopulated_fields = {'slug': ('name',)}
 
 
 @admin.register(Product)
