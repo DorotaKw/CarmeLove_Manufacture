@@ -39,7 +39,7 @@
             <div class="quantity">
                 <input type="number" name="myInput" value="1" min="1" max="100" step="1" class="quantity-field">
             </div>
-            <div class="subtotal">{{ item.get_total|floatformat:2 }}</div>
+            <div class="subtotal">{{ item.total|floatformat:2 }}</div>
             <div class="remove">
                 <button>Remove</button>
             </div>
@@ -84,8 +84,8 @@
 {% endblock content %}
 
 <div>
-    <p>Items: {{ order.get_cart_items }}</p>
-    <p>Total: {{ order.get_cart_total|floatformat:2 }} PLN</p>
+    <p>Items: {{ order.cart_items }}</p>
+    <p>Total: {{ order.cart_total|floatformat:2 }} PLN</p>
     <img data-product="{{ item.product.id }}" data-action="add" class="update-cart" src="{% static 'static/arrow-up.png' %}">
                 <img data-product="{{ item.product.id }}" data-action="remove" class="update-cart" src="{% static 'static/arrow-down.png' %}">
 

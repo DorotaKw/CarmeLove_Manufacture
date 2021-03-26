@@ -18,6 +18,7 @@
             {% for category in categories %}
                 <strong><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></strong>
             {% endfor %}
+            <strong><a href="{% url 'store:promotions' %}">Promotions</a></strong>
         </div>
     </div>
 

@@ -5,7 +5,7 @@ from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 import json
 
@@ -15,17 +15,19 @@ from .forms import ProductOpinionForm, OrderCommentForm
 
 from .utils import *
 
+from about_cl.models import Article
+
 
 def set_initial_cart_status(request):
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
     context = {'cart_items': cart_items}
     return context
 
@@ -36,8 +38,10 @@ def home(request):
     cart_items = data['cart_items']
 
     categories = Category.objects.all()
-    about = 'Hi! We are small Manufacture of Sweets!'
-    context = {'categories': categories, 'cart_items': cart_items, 'about': about}
+    articles = Article.objects.all()
+    context = {'categories': categories,
+               'cart_items': cart_items,
+               'articles': articles}
     return render(request, 'home.html', context)
 
 
@@ -99,6 +103,36 @@ class CategoryView(ListView):
         return context
 
 
+class PromotionsView(ListView):
+    template_name = 'promotions.html'
+    context_object_name = 'promotions'
+    model = ProductPromotion
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart_item = set_initial_cart_status(request=self.request)
+        cart_items = cart_item.get('cart_items')
+        context.update({
+            'categories': Category.objects.all(),
+            'cart_items': cart_items,
+        })
+        return context
+
+    def get_queryset(self):
+        return ProductPromotion.objects.all().order_by('product')
+
+
+def promotion_details(request, promotion_id):
+    categories = Category.objects.all()
+    promotion = ProductPromotion.objects.get(id=promotion_id)
+    cart_item = set_initial_cart_status(request=request)
+    cart_items = cart_item.get('cart_items')
+    context = {'categories': categories,
+               'promotion': promotion,
+               'cart_items': cart_items}
+    return render(request, 'promotion.html', context)
+
+
 def cart(request):
     data = cart_data(request)
 
@@ -117,7 +151,7 @@ def checkout(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
         try:
             comment = OrderComment.objects.get(order=order)
             if comment:
@@ -146,13 +180,13 @@ def checkout(request):
                     context['order_comment'] = order_comment
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
 
     # past code below:
     # earlier when user is not logged in:
     # Exception Value:
-    # Field 'id' expected a number but got {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}.
+    # Field 'id' expected a number but got {'cart_total': 0, 'cart_items': 0, 'shipping': False}.
 
     # data = cart_data(request)
     # customer = data['customer']
@@ -206,7 +240,7 @@ def process_order(request):
     total = float(data['form']['total'])
     order.transaction_id = transaction_id
 
-    if total == order.get_cart_total:
+    if total == order.cart_total:
         order.complete = True
     order.save()
 
@@ -229,7 +263,7 @@ def meta_product(request, slug):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
-        cart_items = order.get_cart_items
+        cart_items = order.cart_items
         form = ProductOpinionForm()
         viewed_meta_product = MetaProduct.objects.get(slug=slug)
         products = viewed_meta_product.product_set.all()
@@ -252,8 +286,8 @@ def meta_product(request, slug):
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
         items = []
-        order = {'get_cart_total': 0, 'get_cart_items': 0, 'shipping': False}
-        cart_items = order['get_cart_items']
+        order = {'cart_total': 0, 'cart_items': 0, 'shipping': False}
+        cart_items = order['cart_items']
         # for now it's the only idea I have, it's working, but view is too fat.
         # maybe JS or/and CSS will help?
         form = None

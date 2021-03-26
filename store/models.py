@@ -180,6 +180,55 @@ class ProductPromotion(Model):
         value_in_percents = round((self.product.price / self.price) * 10)
         return value_in_percents
 
+    @property
+    def name(self):
+        name = self.product
+        return name
+
+    @property
+    def availability(self):
+        availability = self.product.availability
+        return availability
+
+    @property
+    def category(self):
+        category = self.product.meta_product.category
+        return category
+
+    @property
+    def description(self):
+        description = self.product.meta_product.description
+        return description
+
+    @property
+    def digital(self):
+        digital = self.product
+        return digital
+
+    @property
+    def imageURL(self):
+        image = self.product.meta_product.image
+        if image:
+            url = self.product.meta_product.image.url
+        else:
+            url = ''
+        return url
+
+    @property
+    def measure(self):
+        measure = self.product.measure
+        return measure
+
+    @property
+    def package(self):
+        package = self.product.package
+        return package
+
+    @property
+    def standard_price(self):
+        standard_price = self.product.price
+        return standard_price
+
 
 class Order(Model):
     class Meta:
@@ -194,12 +243,12 @@ class Order(Model):
         return str(self.id)
 
     @property
-    def get_order_no(self):
+    def order_no(self):
         order_no = self.id
         return order_no
 
     @property
-    def get_orderitems(self):
+    def orderitems(self):
         orderitems = self.orderitem_set.all()
         return orderitems
 
@@ -213,16 +262,21 @@ class Order(Model):
         return shipping
 
     @property
-    def get_cart_total(self):
+    def cart_total(self):
         orderitems = self.orderitem_set.all()
-        total = sum([item.get_total for item in orderitems])
+        total = sum([item.total for item in orderitems])
         return total
 
     @property
-    def get_cart_items(self):
+    def cart_items(self):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
         return total
+
+    @property
+    def comment(self):
+        comment = self.ordercomment
+        return comment
 
     @property
     def loyalty_points(self):
@@ -232,7 +286,7 @@ class Order(Model):
             date_after_order = date_ordered + timedelta(days=1)
             date_expiration = date_after_order + timedelta(days=365)
             if date_after_order <= current_date <= date_expiration:
-                points = round(self.get_cart_total / 10)
+                points = round(self.cart_total / 10)
         else:
             points = 0
         return points
@@ -258,13 +312,13 @@ class OrderItem(Model):
         return meta_product
 
     @property
-    def get_history_items(self):
+    def history_items(self):
         if self.order.complete is True:
             m_history_items = self.order.orderitems_set.all()
         return m_history_items
 
     @property
-    def get_total(self):
+    def total(self):
         total = self.product.price * self.quantity
         return total
 
@@ -288,7 +342,7 @@ class OrderComment(Model):
         verbose_name_plural = 'Orders Comments'
 
     order = OneToOneField(Order, on_delete=CASCADE, null=True, blank=True)
-    comment = CharField(max_length=500, null=True, blank=True)
+    comment = TextField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.comment

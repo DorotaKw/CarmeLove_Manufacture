@@ -11,7 +11,8 @@ urlpatterns = [
     path('store/<slug:slug>', meta_product, name="meta_product"),
     path('store/categories/', CategoriesView.as_view(), name="categories"),
     path('store/categories/<slug:slug>', CategoryView.as_view(), name="category"),
-
+    path('promotions/', PromotionsView.as_view(), name='promotions'),
+    path('promotions/<int:promotion_id>', promotion_details, name='promotion'),
     # paths after add items to cart
     path('cart/', cart, name="cart"),
     path('checkout/', checkout, name="checkout"),

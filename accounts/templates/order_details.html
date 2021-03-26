@@ -18,10 +18,10 @@
                 <div>Name: {{ order_item.product.name }}</div>
                 <div>Price: {{ order_item.product.price|floatformat:2 }}</div>
                 <div>Quantity: x{{ order_item.quantity }}</div>
-                <div>Total price for product: {{ order_item.get_total|floatformat:2 }}</div>
+                <div>Total price for product: {{ order_item.total|floatformat:2 }}</div>
             {% endfor %}
-            <p>Total price for order: {{ viewed_order.get_cart_total|floatformat:2 }}</p>
-            <p>Products in order: {{ viewed_order.get_cart_items }}</p>
+            <p>Total price for order: {{ viewed_order.cart_total|floatformat:2 }}</p>
+            <p>Products in order: {{ viewed_order.cart_items }}</p>
 <!--            <p>Order comment: {{ order_comment }}</p>-->
         </div>
     </div>
