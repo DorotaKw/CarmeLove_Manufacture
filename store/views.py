@@ -5,7 +5,7 @@ from django.shortcuts import render, HttpResponseRedirect, redirect, get_object_
 from django.http import JsonResponse, HttpResponse
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 import json
 
@@ -14,6 +14,8 @@ from .models import Customer, Category, Product, Order, OrderItem,\
 from .forms import ProductOpinionForm, OrderCommentForm
 
 from .utils import *
+
+from about_cl.models import Article
 
 
 def set_initial_cart_status(request):
@@ -36,8 +38,10 @@ def home(request):
     cart_items = data['cart_items']
 
     categories = Category.objects.all()
-    about = 'Hi! We are small Manufacture of Sweets!'
-    context = {'categories': categories, 'cart_items': cart_items, 'about': about}
+    articles = Article.objects.all()
+    context = {'categories': categories,
+               'cart_items': cart_items,
+               'articles': articles}
     return render(request, 'home.html', context)
 
 
